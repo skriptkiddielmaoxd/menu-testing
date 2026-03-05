@@ -76,6 +76,20 @@
         </Animation>
       </Style.Animations>
     </Style>
+    <Style Selector="Border.cfg-card-6">
+      <Style.Animations>
+        <Animation Duration="0:0:0.45" Delay="0:0:0.40" Easing="CubicEaseOut" FillMode="Forward">
+          <KeyFrame Cue="0%">
+            <Setter Property="Opacity" Value="0" />
+            <Setter Property="TranslateTransform.Y" Value="18" />
+          </KeyFrame>
+          <KeyFrame Cue="100%">
+            <Setter Property="Opacity" Value="1" />
+            <Setter Property="TranslateTransform.Y" Value="0" />
+          </KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
   </UserControl.Styles>
 
   <ScrollViewer HorizontalScrollBarVisibility="Disabled">
@@ -328,6 +342,111 @@
           <CheckBox IsChecked="{Binding ProxyEnabled}"
                     Content="Enable Proxy"
                     Foreground="{DynamicResource TextSecondaryBrush}" />
+        </StackPanel>
+      </Border>
+
+      <!-- ════ ANTI-DETECTION — standalone bottom ════ -->
+      <Border Classes="card cfg-card-6"
+              RenderTransformOrigin="0.5,1"
+              Opacity="0">
+        <Border.RenderTransform><TranslateTransform /></Border.RenderTransform>
+        <StackPanel Spacing="14">
+
+          <!-- Header row with master toggle -->
+          <Grid ColumnDefinitions="Auto,*,Auto">
+            <Border Grid.Column="0" Width="30" Height="30" CornerRadius="10"
+                    Background="#18F472B6"
+                    BoxShadow="0 0 8 0 #15F472B6">
+              <TextBlock Text="🛡" FontSize="14"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center" />
+            </Border>
+            <TextBlock Grid.Column="1"
+                       Text="Anti-Detection"
+                       FontSize="15" FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextPrimaryBrush}"
+                       VerticalAlignment="Center"
+                       Margin="10,0,0,0" />
+            <CheckBox Grid.Column="2"
+                      IsChecked="{Binding AntiDetectionEnabled}"
+                      Content="Enable"
+                      Foreground="{DynamicResource TextSecondaryBrush}"
+                      VerticalAlignment="Center" />
+          </Grid>
+
+          <Border Classes="divider" />
+
+          <!-- All sub-controls disabled when master toggle is off -->
+          <StackPanel Spacing="14"
+                      IsEnabled="{Binding AntiDetectionEnabled}">
+
+            <!-- Row 1: Jitter -->
+            <StackPanel Spacing="8">
+              <CheckBox IsChecked="{Binding EnableJitter}"
+                        Content="Enable Click Jitter  (randomise timing between actions)"
+                        Foreground="{DynamicResource TextSecondaryBrush}" />
+              <Grid ColumnDefinitions="*,*" IsEnabled="{Binding EnableJitter}">
+                <StackPanel Grid.Column="0" Spacing="6" Margin="0,0,12,0">
+                  <TextBlock Text="JITTER MIN (ms)" Classes="section-title" />
+                  <TextBox Classes="field" Text="{Binding JitterMinMs}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Spacing="6">
+                  <TextBlock Text="JITTER MAX (ms)" Classes="section-title" />
+                  <TextBox Classes="field" Text="{Binding JitterMaxMs}" />
+                </StackPanel>
+              </Grid>
+            </StackPanel>
+
+            <!-- Row 2: Dummy activity -->
+            <StackPanel Spacing="8">
+              <CheckBox IsChecked="{Binding EnableDummyActivity}"
+                        Content="Enable Dummy Activity  (simulate idle player actions)"
+                        Foreground="{DynamicResource TextSecondaryBrush}" />
+              <StackPanel Spacing="6" MaxWidth="220" HorizontalAlignment="Left"
+                          IsEnabled="{Binding EnableDummyActivity}">
+                <TextBlock Text="DUMMY INTERVAL (s)" Classes="section-title" />
+                <TextBox Classes="field" Text="{Binding DummyActivityIntervalSeconds}" />
+              </StackPanel>
+            </StackPanel>
+
+            <!-- Row 3: Humanisation -->
+            <StackPanel Spacing="8">
+              <CheckBox IsChecked="{Binding EnableHumanization}"
+                        Content="Enable Humanisation  (vary timings to mimic real player)"
+                        Foreground="{DynamicResource TextSecondaryBrush}" />
+              <StackPanel Spacing="6" IsEnabled="{Binding EnableHumanization}">
+                <Grid ColumnDefinitions="*,Auto">
+                  <TextBlock Grid.Column="0" Text="HUMANISATION STRENGTH" Classes="section-title" />
+                  <TextBlock Grid.Column="1"
+                             Text="{Binding HumanizationStrengthPercent, StringFormat='{}{0}%'}"
+                             Classes="section-title"
+                             Foreground="{DynamicResource AccentPrimaryBrush}"
+                             Margin="0" />
+                </Grid>
+                <Slider Minimum="0" Maximum="1" TickFrequency="0.01"
+                        IsSnapToTickEnabled="True"
+                        Value="{Binding HumanizationStrength}" />
+              </StackPanel>
+            </StackPanel>
+
+            <!-- Row 4: Misc toggles + rate limit -->
+            <WrapPanel Orientation="Horizontal" Margin="0,4,0,0">
+              <CheckBox IsChecked="{Binding RandomizeClickPosition}"
+                        Content="Randomise Click Position"
+                        Foreground="{DynamicResource TextSecondaryBrush}"
+                        Margin="0,0,28,4" />
+              <CheckBox IsChecked="{Binding EnableFakeMovement}"
+                        Content="Fake Player Movement"
+                        Foreground="{DynamicResource TextSecondaryBrush}"
+                        Margin="0,0,28,4" />
+            </WrapPanel>
+            <StackPanel Spacing="6" MaxWidth="220" HorizontalAlignment="Left">
+              <TextBlock Text="MAX ACTIONS / MINUTE" Classes="section-title" />
+              <TextBox Classes="field" Text="{Binding MaxActionsPerMinute}"
+                       ToolTip.Tip="Rate-cap sent to the Rust backend (0 = unlimited)" />
+            </StackPanel>
+
+          </StackPanel>
         </StackPanel>
       </Border>
 

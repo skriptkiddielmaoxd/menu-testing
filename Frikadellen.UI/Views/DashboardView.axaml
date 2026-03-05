@@ -72,6 +72,22 @@
       </Style.Animations>
     </Style>
 
+    <!-- Stats panel entrance -->
+    <Style Selector="Border.stats-panel">
+      <Style.Animations>
+        <Animation Duration="0:0:0.5" Delay="0:0:0.3" Easing="CubicEaseOut" FillMode="Forward">
+          <KeyFrame Cue="0%">
+            <Setter Property="Opacity" Value="0" />
+            <Setter Property="TranslateTransform.Y" Value="16" />
+          </KeyFrame>
+          <KeyFrame Cue="100%">
+            <Setter Property="Opacity" Value="1" />
+            <Setter Property="TranslateTransform.Y" Value="0" />
+          </KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
+
     <!-- Toggle button transition -->
     <Style Selector="Button.toggle-btn">
       <Setter Property="Transitions">
@@ -283,6 +299,46 @@
           </Grid>
         </Border>
       </Grid>
+
+      <!-- ── SESSION STATS PANEL ── -->
+      <Border Classes="card stats-panel"
+              Margin="0,0,0,18"
+              Opacity="0"
+              RenderTransformOrigin="0.5,1">
+        <Border.RenderTransform><TranslateTransform /></Border.RenderTransform>
+        <Grid ColumnDefinitions="*,1,*,1,*">
+          <!-- Total Spent -->
+          <StackPanel Grid.Column="0" Spacing="4" HorizontalAlignment="Center">
+            <TextBlock Text="TOTAL SPENT" Classes="section-title" HorizontalAlignment="Center" Margin="0" />
+            <TextBlock Text="{Binding TotalCoinsSpent}"
+                       FontSize="20" FontWeight="Bold"
+                       Foreground="{DynamicResource AccentSecondaryBrush}"
+                       HorizontalAlignment="Center" />
+          </StackPanel>
+          <!-- Divider -->
+          <Border Grid.Column="1" Width="1" Background="{DynamicResource BorderSubtleBrush}"
+                  VerticalAlignment="Stretch" />
+          <!-- Total Earned -->
+          <StackPanel Grid.Column="2" Spacing="4" HorizontalAlignment="Center">
+            <TextBlock Text="TOTAL EARNED" Classes="section-title" HorizontalAlignment="Center" Margin="0" />
+            <TextBlock Text="{Binding TotalCoinsEarned}"
+                       FontSize="20" FontWeight="Bold"
+                       Foreground="{DynamicResource AccentSuccessBrush}"
+                       HorizontalAlignment="Center" />
+          </StackPanel>
+          <!-- Divider -->
+          <Border Grid.Column="3" Width="1" Background="{DynamicResource BorderSubtleBrush}"
+                  VerticalAlignment="Stretch" />
+          <!-- Win Rate -->
+          <StackPanel Grid.Column="4" Spacing="4" HorizontalAlignment="Center">
+            <TextBlock Text="WIN RATE" Classes="section-title" HorizontalAlignment="Center" Margin="0" />
+            <TextBlock Text="{Binding WinRate}"
+                       FontSize="20" FontWeight="Bold"
+                       Foreground="{DynamicResource AccentWarningBrush}"
+                       HorizontalAlignment="Center" />
+          </StackPanel>
+        </Grid>
+      </Border>
 
       <!-- ── LATEST FLIP HIGHLIGHT ── -->
       <Border Classes="card flips-section"

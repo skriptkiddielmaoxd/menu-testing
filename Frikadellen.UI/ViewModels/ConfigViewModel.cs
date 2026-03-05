@@ -1,3 +1,4 @@
+using System;
 using System.Windows.Input;
 using Frikadellen.UI.Models;
 using Frikadellen.UI.Services;
@@ -51,6 +52,20 @@ public sealed class ConfigViewModel : ViewModelBase
 
     // ── Discord ──
     public string DiscordChannelId { get => _cfg.DiscordChannelId; set { _cfg.DiscordChannelId = value; OnPropertyChanged(); } }
+
+    // ── Anti-Detection ──
+    public bool   AntiDetectionEnabled          { get => _cfg.AntiDetectionEnabled;          set { _cfg.AntiDetectionEnabled = value;          OnPropertyChanged(); } }
+    public bool   EnableJitter                  { get => _cfg.EnableJitter;                  set { _cfg.EnableJitter = value;                  OnPropertyChanged(); } }
+    public int    JitterMinMs                   { get => _cfg.JitterMinMs;                   set { _cfg.JitterMinMs = value;                   OnPropertyChanged(); } }
+    public int    JitterMaxMs                   { get => _cfg.JitterMaxMs;                   set { _cfg.JitterMaxMs = value;                   OnPropertyChanged(); } }
+    public bool   EnableDummyActivity           { get => _cfg.EnableDummyActivity;           set { _cfg.EnableDummyActivity = value;           OnPropertyChanged(); } }
+    public int    DummyActivityIntervalSeconds  { get => _cfg.DummyActivityIntervalSeconds;  set { _cfg.DummyActivityIntervalSeconds = value;  OnPropertyChanged(); } }
+    public bool   EnableHumanization            { get => _cfg.EnableHumanization;            set { _cfg.EnableHumanization = value;            OnPropertyChanged(); } }
+    public double HumanizationStrength          { get => _cfg.HumanizationStrength;          set { _cfg.HumanizationStrength = value;          OnPropertyChanged(); OnPropertyChanged(nameof(HumanizationStrengthPercent)); } }
+    public int    HumanizationStrengthPercent   => (int)Math.Round(_cfg.HumanizationStrength * 100);
+    public bool   RandomizeClickPosition        { get => _cfg.RandomizeClickPosition;        set { _cfg.RandomizeClickPosition = value;        OnPropertyChanged(); } }
+    public bool   EnableFakeMovement            { get => _cfg.EnableFakeMovement;            set { _cfg.EnableFakeMovement = value;            OnPropertyChanged(); } }
+    public int    MaxActionsPerMinute           { get => _cfg.MaxActionsPerMinute;           set { _cfg.MaxActionsPerMinute = value;           OnPropertyChanged(); } }
 
     // ── Save ──
     public string SaveStatus

@@ -340,6 +340,16 @@
               </StackPanel>
             </Button>
 
+            <Button Classes="nav-item"
+                    Command="{Binding NavigateCommand}"
+                    CommandParameter="Console"
+                    ToolTip.Tip="Console">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="⬛" FontSize="14" VerticalAlignment="Center" />
+                <TextBlock Text="Console" FontSize="13" VerticalAlignment="Center" />
+              </StackPanel>
+            </Button>
+
           </StackPanel>
         </Border>
 
@@ -370,6 +380,9 @@
                     </DataTemplate>
                     <DataTemplate DataType="vm:NotifierViewModel">
                       <views:NotifierView />
+                    </DataTemplate>
+                    <DataTemplate DataType="vm:ConsoleViewModel">
+                      <views:ConsoleView />
                     </DataTemplate>
                   </ContentControl.DataTemplates>
                 </ContentControl>
