@@ -167,6 +167,12 @@ public sealed class DashboardViewModel : ViewModelBase
         OnPropertyChanged(nameof(WinRate));
     }
 
+    /// <summary>
+    /// Stops the mock-data timer so the dashboard only shows real backend data.
+    /// Called by MainWindowViewModel once the WebSocket connects.
+    /// </summary>
+    public void DisableMockMode() => _mockTimer.Stop();
+
     /// <summary>INTEGRATION POINT: push live stats from GET /api/stats.</summary>
     public void ApplyStats(Services.StatsDto stats)
     {

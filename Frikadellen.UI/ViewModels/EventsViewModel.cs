@@ -59,6 +59,12 @@ public sealed class EventsViewModel : ViewModelBase
         if (Events.Count > 200) Events.RemoveAt(Events.Count - 1);
     }
 
+    /// <summary>
+    /// Stops the mock-data timer so the feed only shows real backend events.
+    /// Called by MainWindowViewModel once the WebSocket connects.
+    /// </summary>
+    public void DisableMockMode() => _mockTimer.Stop();
+
     public void AddEvent(EventItem item)
     {
         Events.Insert(0, item);
