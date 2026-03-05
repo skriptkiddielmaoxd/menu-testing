@@ -10,7 +10,8 @@ namespace Frikadellen.UI.ViewModels;
 /// </summary>
 public sealed class MainWindowViewModel : ViewModelBase
 {
-    private readonly SettingsService _settings = new();
+    private readonly SettingsService     _settings = new();
+    private readonly RustProcessLauncher _launcher = new();
 
     // ── Phase tracking ──
     public enum Phase { Splash, Login, Shell }
@@ -25,9 +26,10 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     // Child view-models (lazy)
     private DashboardViewModel? _dashboard;
-    private EventsViewModel? _events;
-    private ConfigViewModel? _config;
-    private NotifierViewModel? _notifier;
+    private EventsViewModel?    _events;
+    private ConfigViewModel?    _config;
+    private NotifierViewModel?  _notifier;
+    private ConsoleViewModel?   _console;
 
     public MainWindowViewModel()
     {
@@ -39,6 +41,13 @@ public sealed class MainWindowViewModel : ViewModelBase
         NavigateCommand      = new RelayCommand(o => Navigate(o?.ToString()));
         ToggleSidebarCommand = new RelayCommand(() => IsSidebarExpanded = !IsSidebarExpanded);
         ToggleThemeCommand   = new RelayCommand(() => App.ToggleTheme());
+
+        // Propagate launcher running-state to the status chip
+        _launcher.RunningChanged += running =>
+        {
+            StatusText = running ? "Running" : "Stopped";
+            OnPropertyChanged(nameof(StatusChipColor));
+        };
     }
 
     // ── Properties ──
@@ -148,6 +157,7 @@ public sealed class MainWindowViewModel : ViewModelBase
             "Events"   => _events   ??= new EventsViewModel(),
             "Config"   => _config   ??= new ConfigViewModel(_settings),
             "Notifier" => _notifier ??= new NotifierViewModel(_settings),
+            "Console"  => _console  ??= new ConsoleViewModel(_launcher),
             _          => _dashboard ??= new DashboardViewModel(),
         };
     }
@@ -162,7 +172,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     {
         StatusText = "Starting…";
         OnPropertyChanged(nameof(StatusChipColor));
-        // TODO: _launcher.Start(); _socket.ConnectAsync();
+        // INTEGRATION POINT: _launcher.Start(); _socket.ConnectAsync();
     }
 
     /// <summary>Stop the Rust backend process and disconnect the WebSocket.</summary>
@@ -170,6 +180,6 @@ public sealed class MainWindowViewModel : ViewModelBase
     {
         StatusText = "Stopped";
         OnPropertyChanged(nameof(StatusChipColor));
-        // TODO: _socket.Disconnect(); _launcher.Stop();
+        // INTEGRATION POINT: _socket.Disconnect(); _launcher.Stop();
     }
 }

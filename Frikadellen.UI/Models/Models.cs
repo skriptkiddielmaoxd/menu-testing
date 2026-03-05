@@ -113,6 +113,19 @@ public class UiSettings
     public bool SkipAlways { get; set; } = false;
     public bool SkipUserFinder { get; set; } = false;
     public bool SkipSkins { get; set; } = false;
+
+    // ── Anti-detection ([anti_detection] in config.toml) ──
+    public bool AntiDetectionEnabled { get; set; } = false;
+    public bool EnableJitter { get; set; } = true;
+    public int JitterMinMs { get; set; } = 20;
+    public int JitterMaxMs { get; set; } = 120;
+    public bool EnableDummyActivity { get; set; } = true;
+    public int DummyActivityIntervalSeconds { get; set; } = 45;
+    public bool EnableHumanization { get; set; } = true;
+    public double HumanizationStrength { get; set; } = 0.5;
+    public bool RandomizeClickPosition { get; set; } = false;
+    public bool EnableFakeMovement { get; set; } = false;
+    public int MaxActionsPerMinute { get; set; } = 60;
 }
 
 // ────────── Helpers ──────────

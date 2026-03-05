@@ -17,6 +17,9 @@ public sealed class DashboardViewModel : ViewModelBase
     private string _botStatus = "Offline";
     private long _sessionProfit;
     private int _sessionFlips;
+    private int _sessionWins;
+    private long _totalCoinsSpent;
+    private long _totalCoinsEarned;
     private FlipRecord? _latestFlip;
 
     public bool IsRunning
@@ -62,6 +65,13 @@ public sealed class DashboardViewModel : ViewModelBase
         => _sessionProfit > 0 ? $"+{Fmt.Coins(_sessionProfit)}" : Fmt.Coins(_sessionProfit);
 
     public int SessionFlips => _sessionFlips;
+
+    public string TotalCoinsSpent  => Fmt.Coins(_totalCoinsSpent);
+    public string TotalCoinsEarned => Fmt.Coins(_totalCoinsEarned);
+
+    public string WinRate => _sessionFlips > 0
+        ? $"{Math.Round(_sessionWins / (double)_sessionFlips * 100, 1):0.#}%"
+        : "—";
 
     public FlipRecord? LatestFlip
     {
@@ -123,14 +133,7 @@ public sealed class DashboardViewModel : ViewModelBase
         QueueDepth = MockDataService.RandomQueue();
 
         var flip = MockDataService.RandomFlip();
-        RecentFlips.Insert(0, flip);
-        if (RecentFlips.Count > 50) RecentFlips.RemoveAt(RecentFlips.Count - 1);
-        LatestFlip = flip;
-
-        _sessionProfit += flip.Profit;
-        _sessionFlips++;
-        OnPropertyChanged(nameof(SessionProfit));
-        OnPropertyChanged(nameof(SessionFlips));
+        TrackFlip(flip);
     }
 
     public void UpdateFromStatus(string state, string purse, int queue, string botStatus)
@@ -141,14 +144,42 @@ public sealed class DashboardViewModel : ViewModelBase
         BotStatus   = botStatus;
     }
 
+    /// <summary>
+    /// Called by the WebSocket handler or mock timer whenever a flip completes.
+    /// A flip is counted as a "win" when profit is positive.
+    /// </summary>
     public void TrackFlip(FlipRecord flip)
     {
         RecentFlips.Insert(0, flip);
         if (RecentFlips.Count > 50) RecentFlips.RemoveAt(RecentFlips.Count - 1);
         LatestFlip = flip;
-        _sessionProfit += flip.Profit;
+
+        _sessionProfit     += flip.Profit;
+        _totalCoinsSpent   += flip.BuyPrice;
+        _totalCoinsEarned  += flip.SellPrice;
         _sessionFlips++;
+        if (flip.Profit > 0) _sessionWins++;
+
         OnPropertyChanged(nameof(SessionProfit));
         OnPropertyChanged(nameof(SessionFlips));
+        OnPropertyChanged(nameof(TotalCoinsSpent));
+        OnPropertyChanged(nameof(TotalCoinsEarned));
+        OnPropertyChanged(nameof(WinRate));
+    }
+
+    /// <summary>INTEGRATION POINT: push live stats from GET /api/stats.</summary>
+    public void ApplyStats(Services.StatsDto stats)
+    {
+        _sessionProfit    = stats.SessionProfit;
+        _totalCoinsSpent  = stats.TotalCoinsSpent;
+        _totalCoinsEarned = stats.TotalCoinsEarned;
+        _sessionFlips     = stats.TotalFlips;
+        _sessionWins      = stats.WinCount;
+
+        OnPropertyChanged(nameof(SessionProfit));
+        OnPropertyChanged(nameof(SessionFlips));
+        OnPropertyChanged(nameof(TotalCoinsSpent));
+        OnPropertyChanged(nameof(TotalCoinsEarned));
+        OnPropertyChanged(nameof(WinRate));
     }
 }
