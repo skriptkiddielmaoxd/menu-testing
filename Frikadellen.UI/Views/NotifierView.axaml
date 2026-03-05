@@ -1,0 +1,225 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Frikadellen.UI.ViewModels"
+             x:Class="Frikadellen.UI.Views.NotifierView"
+             x:DataType="vm:NotifierViewModel">
+
+  <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+    <StackPanel Spacing="0" Margin="0,0,8,0" MaxWidth="700">
+
+      <!-- ── PAGE HEADER ── -->
+      <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,24">
+        <StackPanel Grid.Column="0" Spacing="4">
+          <TextBlock Text="Notifier"
+                     FontSize="26" FontWeight="Bold"
+                     Foreground="{DynamicResource TextPrimaryBrush}" />
+          <TextBlock Text="Discord bot and webhook notification settings"
+                     FontSize="13"
+                     Foreground="{DynamicResource TextMutedBrush}" />
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10"
+                    VerticalAlignment="Center">
+          <TextBlock Text="{Binding SaveStatus}"
+                     FontSize="12"
+                     Foreground="{DynamicResource AccentSuccessBrush}"
+                     VerticalAlignment="Center"
+                     Opacity="0.9" />
+          <Button Classes="pill-primary"
+                  Command="{Binding SaveCommand}">
+            <StackPanel Orientation="Horizontal" Spacing="7">
+              <TextBlock Text="💾" FontSize="13" VerticalAlignment="Center" />
+              <TextBlock Text="Save" FontSize="13" FontWeight="SemiBold"
+                         VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+        </StackPanel>
+      </Grid>
+
+      <!-- ════ DISCORD BOT ════ -->
+      <Border Classes="card">
+        <StackPanel Spacing="16">
+          <StackPanel Orientation="Horizontal" Spacing="10">
+            <Border Width="28" Height="28" CornerRadius="8"
+                    Background="#155865F2">
+              <TextBlock Text="🤖" FontSize="14"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center" />
+            </Border>
+            <TextBlock Text="Discord Bot"
+                       FontSize="15" FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextPrimaryBrush}"
+                       VerticalAlignment="Center" />
+          </StackPanel>
+          <Border Classes="divider" />
+
+          <!-- Info banner -->
+          <Border CornerRadius="12" Padding="14,12"
+                  Background="#10818CF8"
+                  BorderBrush="#20818CF8"
+                  BorderThickness="1">
+            <TextBlock TextWrapping="Wrap" FontSize="12"
+                       Foreground="{DynamicResource TextSecondaryBrush}">
+              <Run Text="The bot responds to " />
+              <Run Text="!start" FontFamily="Consolas,Monospace" FontWeight="SemiBold"
+                   Foreground="{DynamicResource AccentPrimaryBrush}" />
+              <Run Text=" / " />
+              <Run Text="!stop" FontFamily="Consolas,Monospace" FontWeight="SemiBold"
+                   Foreground="{DynamicResource AccentPrimaryBrush}" />
+              <Run Text=" / " />
+              <Run Text="!status" FontFamily="Consolas,Monospace" FontWeight="SemiBold"
+                   Foreground="{DynamicResource AccentPrimaryBrush}" />
+              <Run Text=" and sends rich embed notifications for purchases, sales and events." />
+            </TextBlock>
+          </Border>
+
+          <!-- Bot token -->
+          <StackPanel Spacing="6">
+            <TextBlock Text="BOT TOKEN" Classes="section-title" />
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBox Grid.Column="0"
+                       Classes="field"
+                       Text="{Binding DiscordBotToken}"
+                       Watermark="Your Discord bot token…"
+                       PasswordChar="{Binding TokenPasswordChar}"
+                       Margin="0,0,8,0"
+                       ToolTip.Tip="Discord bot token (keep this secret!)" />
+              <Button Grid.Column="1"
+                      Classes="icon-btn"
+                      Width="40" Height="40"
+                      CornerRadius="10"
+                      Background="{DynamicResource BgElevatedBrush}"
+                      Command="{Binding ToggleTokenVisibilityCommand}"
+                      ToolTip.Tip="Show/hide token">
+                <TextBlock Text="{Binding IsTokenVisible, Converter={x:Static vm:ShowHideConverter.Instance}}"
+                           FontSize="14"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+              </Button>
+            </Grid>
+          </StackPanel>
+
+          <!-- Channel ID -->
+          <StackPanel Spacing="6">
+            <TextBlock Text="CHANNEL ID (optional)" Classes="section-title" />
+            <TextBox Classes="field"
+                     Text="{Binding DiscordChannelId}"
+                     Watermark="e.g. 123456789012345678"
+                     ToolTip.Tip="Restrict bot commands to this channel (empty = any channel)" />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+
+      <!-- ════ WEBHOOK ════ -->
+      <Border Classes="card">
+        <StackPanel Spacing="16">
+          <StackPanel Orientation="Horizontal" Spacing="10">
+            <Border Width="28" Height="28" CornerRadius="8"
+                    Background="#1534D399">
+              <TextBlock Text="🪝" FontSize="14"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center" />
+            </Border>
+            <TextBlock Text="Discord Webhook"
+                       FontSize="15" FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextPrimaryBrush}"
+                       VerticalAlignment="Center" />
+          </StackPanel>
+          <Border Classes="divider" />
+
+          <!-- Info banner -->
+          <Border CornerRadius="12" Padding="14,12"
+                  Background="#10FBBF24"
+                  BorderBrush="#20FBBF24"
+                  BorderThickness="1">
+            <TextBlock TextWrapping="Wrap" FontSize="12"
+                       Foreground="{DynamicResource TextSecondaryBrush}">
+              <Run Text="A webhook is a lightweight alternative — one-way notifications only (no remote control). Set empty to disable. Can be used independently of the bot." />
+            </TextBlock>
+          </Border>
+
+          <StackPanel Spacing="6">
+            <TextBlock Text="WEBHOOK URL" Classes="section-title" />
+            <TextBox Classes="field"
+                     Text="{Binding WebhookUrl}"
+                     Watermark="https://discord.com/api/webhooks/…"
+                     ToolTip.Tip="Discord webhook URL (empty = disabled)" />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+
+      <!-- ════ COMMANDS QUICK REFERENCE ════ -->
+      <Border Classes="card">
+        <StackPanel Spacing="14">
+          <StackPanel Orientation="Horizontal" Spacing="10">
+            <Border Width="28" Height="28" CornerRadius="8"
+                    Background="#15F87171">
+              <TextBlock Text="📋" FontSize="14"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center" />
+            </Border>
+            <TextBlock Text="Bot Commands"
+                       FontSize="15" FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextPrimaryBrush}"
+                       VerticalAlignment="Center" />
+          </StackPanel>
+          <Border Classes="divider" />
+
+          <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto"
+                Margin="0,4,0,0">
+            <!-- !start -->
+            <Border Grid.Column="0" Grid.Row="0"
+                    CornerRadius="8" Padding="8,4"
+                    Background="{DynamicResource BgElevatedBrush}"
+                    Margin="0,0,14,8">
+              <TextBlock Text="!start"
+                         FontFamily="Consolas,Monospace"
+                         FontSize="12" FontWeight="SemiBold"
+                         Foreground="{DynamicResource AccentSuccessBrush}" />
+            </Border>
+            <TextBlock Grid.Column="1" Grid.Row="0"
+                       Text="Resume flip purchasing"
+                       FontSize="12"
+                       Foreground="{DynamicResource TextSecondaryBrush}"
+                       VerticalAlignment="Center"
+                       Margin="0,0,0,8" />
+
+            <!-- !stop -->
+            <Border Grid.Column="0" Grid.Row="1"
+                    CornerRadius="8" Padding="8,4"
+                    Background="{DynamicResource BgElevatedBrush}"
+                    Margin="0,0,14,8">
+              <TextBlock Text="!stop"
+                         FontFamily="Consolas,Monospace"
+                         FontSize="12" FontWeight="SemiBold"
+                         Foreground="{DynamicResource AccentDangerBrush}" />
+            </Border>
+            <TextBlock Grid.Column="1" Grid.Row="1"
+                       Text="Pause flip purchasing (bot stays connected)"
+                       FontSize="12"
+                       Foreground="{DynamicResource TextSecondaryBrush}"
+                       VerticalAlignment="Center"
+                       Margin="0,0,0,8" />
+
+            <!-- !status -->
+            <Border Grid.Column="0" Grid.Row="2"
+                    CornerRadius="8" Padding="8,4"
+                    Background="{DynamicResource BgElevatedBrush}"
+                    Margin="0,0,14,0">
+              <TextBlock Text="!status"
+                         FontFamily="Consolas,Monospace"
+                         FontSize="12" FontWeight="SemiBold"
+                         Foreground="{DynamicResource AccentSecondaryBrush}" />
+            </Border>
+            <TextBlock Grid.Column="1" Grid.Row="2"
+                       Text="Show current state, purse, bot status and queue"
+                       FontSize="12"
+                       Foreground="{DynamicResource TextSecondaryBrush}"
+                       VerticalAlignment="Center" />
+          </Grid>
+
+        </StackPanel>
+      </Border>
+
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

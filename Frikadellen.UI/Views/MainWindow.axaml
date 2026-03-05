@@ -1,0 +1,324 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Frikadellen.UI.ViewModels"
+        xmlns:views="using:Frikadellen.UI.Views"
+        x:Class="Frikadellen.UI.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="Frikadellen"
+        Width="1280" Height="780"
+        MinWidth="920" MinHeight="560"
+        SystemDecorations="None"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        Background="Transparent"
+        TransparencyLevelHint="Transparent"
+        WindowStartupLocation="CenterScreen">
+
+  <Window.Styles>
+
+    <!-- View host fade+slide transition -->
+    <Style Selector="ContentControl.view-host">
+      <Style.Animations>
+        <Animation Duration="0:0:0.28" Easing="CubicEaseOut" FillMode="Forward">
+          <KeyFrame Cue="0%">
+            <Setter Property="Opacity" Value="0" />
+            <Setter Property="TranslateTransform.Y" Value="16" />
+          </KeyFrame>
+          <KeyFrame Cue="100%">
+            <Setter Property="Opacity" Value="1" />
+            <Setter Property="TranslateTransform.Y" Value="0" />
+          </KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
+
+    <!-- Sidebar transition -->
+    <Style Selector="Border.sidebar">
+      <Setter Property="Transitions">
+        <Transitions>
+          <DoubleTransition Property="Width" Duration="0:0:0.22" Easing="CubicEaseInOut" />
+        </Transitions>
+      </Setter>
+    </Style>
+
+    <!-- Nav active indicator bar -->
+    <Style Selector="Border.nav-indicator">
+      <Setter Property="Transitions">
+        <Transitions>
+          <DoubleTransition Property="Opacity" Duration="0:0:0.15" />
+        </Transitions>
+      </Setter>
+    </Style>
+
+    <!-- Chrome button base -->
+    <Style Selector="Button.chrome-btn">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="#64748B" />
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="Width" Value="34" />
+      <Setter Property="Height" Value="28" />
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Padding" Value="0" />
+    </Style>
+    <Style Selector="Button.chrome-btn:pointerover">
+      <Setter Property="Background" Value="#20FFFFFF" />
+      <Setter Property="Foreground" Value="#CBD5E1" />
+    </Style>
+    <Style Selector="Button.chrome-close:pointerover">
+      <Setter Property="Background" Value="#EF4444" />
+      <Setter Property="Foreground" Value="White" />
+    </Style>
+
+    <!-- Status chip colour transition -->
+    <Style Selector="Border.status-chip">
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Background" Duration="0:0:0.3" />
+        </Transitions>
+      </Setter>
+    </Style>
+
+  </Window.Styles>
+
+  <!-- Root: rounded window with drop shadow -->
+  <Border CornerRadius="18"
+          ClipToBounds="True"
+          BoxShadow="0 8 48 0 #80000000, 0 2 8 0 #40000000"
+          Background="{DynamicResource BgBaseBrush}">
+
+    <!-- Full-screen grid: splash/login overlay + shell -->
+    <Grid>
+
+      <!-- ═══════════════════════════════════════
+           SPLASH / LOGIN  (overlay phases)
+      ═══════════════════════════════════════ -->
+      <ContentControl Content="{Binding CurrentView}"
+                      IsVisible="{Binding !IsShell}"
+                      Classes="view-host">
+        <ContentControl.RenderTransform>
+          <TranslateTransform />
+        </ContentControl.RenderTransform>
+        <ContentControl.ContentTemplate>
+          <DataTemplate>
+            <ContentControl Content="{Binding}">
+              <ContentControl.DataTemplates>
+                <DataTemplate DataType="vm:SplashViewModel">
+                  <views:SplashView />
+                </DataTemplate>
+                <DataTemplate DataType="vm:LoginViewModel">
+                  <views:LoginView />
+                </DataTemplate>
+              </ContentControl.DataTemplates>
+            </ContentControl>
+          </DataTemplate>
+        </ContentControl.ContentTemplate>
+      </ContentControl>
+
+      <!-- ═══════════════════════════════════════
+           MAIN SHELL  (title bar + sidebar + content)
+      ═══════════════════════════════════════ -->
+      <Grid RowDefinitions="46,*"
+            ColumnDefinitions="Auto,*"
+            IsVisible="{Binding IsShell}">
+
+        <!-- ── TITLE BAR ── -->
+        <Border Grid.Row="0" Grid.ColumnSpan="2"
+                Background="#0D1223"
+                BorderBrush="{DynamicResource BorderSubtleBrush}"
+                BorderThickness="0,0,0,1"
+                Name="TitleBar">
+          <Grid ColumnDefinitions="Auto,*,Auto">
+
+            <!-- Left: logo + title + status chip -->
+            <StackPanel Grid.Column="0"
+                        Orientation="Horizontal"
+                        Spacing="12" Margin="16,0,0,0"
+                        VerticalAlignment="Center">
+              <!-- Logo mark (geometric diamond) -->
+              <Border Width="26" Height="26"
+                      CornerRadius="8"
+                      Background="#20818CF8"
+                      BorderBrush="#40818CF8"
+                      BorderThickness="1">
+                <TextBlock Text="✦" FontSize="13"
+                           Foreground="{DynamicResource AccentPrimaryBrush}"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+              </Border>
+
+              <TextBlock Text="Frikadellen"
+                         FontSize="14" FontWeight="Bold"
+                         Foreground="{DynamicResource TextPrimaryBrush}"
+                         VerticalAlignment="Center" />
+
+              <!-- Status chip -->
+              <Border Classes="status-chip chip"
+                      Background="#34D39920"
+                      VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                  <!-- Pulse dot -->
+                  <Ellipse Width="6" Height="6"
+                           Fill="{DynamicResource AccentSuccessBrush}" />
+                  <TextBlock Text="{Binding StatusText}"
+                             FontSize="11" FontWeight="Medium"
+                             Foreground="{DynamicResource TextSecondaryBrush}" />
+                </StackPanel>
+              </Border>
+            </StackPanel>
+
+            <!-- Centre: drag handle -->
+            <Border Grid.Column="1" Background="Transparent" Name="DragRegion" />
+
+            <!-- Right: chrome controls -->
+            <StackPanel Grid.Column="2"
+                        Orientation="Horizontal"
+                        Spacing="2" Margin="0,0,8,0"
+                        VerticalAlignment="Center">
+              <Button Classes="chrome-btn"
+                      Content="◐"
+                      ToolTip.Tip="Toggle theme"
+                      Command="{Binding ToggleThemeCommand}" />
+              <Button Classes="chrome-btn"
+                      Content="—"
+                      ToolTip.Tip="Minimise"
+                      Name="MinimizeButton" />
+              <Button Classes="chrome-btn"
+                      Content="⬜"
+                      ToolTip.Tip="Maximise / Restore"
+                      Name="MaximizeButton" />
+              <Button Classes="chrome-btn chrome-close"
+                      Content="✕"
+                      ToolTip.Tip="Close"
+                      Name="CloseButton" />
+            </StackPanel>
+          </Grid>
+        </Border>
+
+        <!-- ── SIDEBAR ── -->
+        <Border Grid.Row="1" Grid.Column="0"
+                Classes="sidebar"
+                Width="{Binding SidebarWidth}"
+                Background="{DynamicResource BgSidebarBrush}"
+                BorderBrush="{DynamicResource BorderSubtleBrush}"
+                BorderThickness="0,0,1,0"
+                CornerRadius="0,0,0,18"
+                Padding="8,14,8,14">
+          <DockPanel>
+
+            <!-- Bottom: collapse toggle -->
+            <Button DockPanel.Dock="Bottom"
+                    Classes="nav-item"
+                    Command="{Binding ToggleSidebarCommand}"
+                    Margin="0,6,0,0"
+                    ToolTip.Tip="Collapse sidebar">
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="{Binding SidebarCollapseIcon}"
+                           FontSize="14" Width="20"
+                           TextAlignment="Center"
+                           Foreground="{DynamicResource TextMutedBrush}" />
+                <TextBlock Text="Collapse"
+                           FontSize="12"
+                           Foreground="{DynamicResource TextMutedBrush}"
+                           IsVisible="{Binding IsSidebarExpanded}" />
+              </StackPanel>
+            </Button>
+
+            <!-- Divider -->
+            <Border DockPanel.Dock="Bottom" Classes="divider" Margin="4,0" />
+
+            <!-- Nav items -->
+            <StackPanel Spacing="3">
+
+              <Button Classes="nav-item"
+                      Command="{Binding NavigateCommand}"
+                      CommandParameter="Dashboard"
+                      ToolTip.Tip="Dashboard">
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                  <TextBlock Text="▦" FontSize="15" Width="20"
+                             TextAlignment="Center" />
+                  <TextBlock Text="Dashboard" FontSize="13"
+                             IsVisible="{Binding IsSidebarExpanded}" />
+                </StackPanel>
+              </Button>
+
+              <Button Classes="nav-item"
+                      Command="{Binding NavigateCommand}"
+                      CommandParameter="Events"
+                      ToolTip.Tip="Live Events">
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                  <TextBlock Text="⚡" FontSize="15" Width="20"
+                             TextAlignment="Center" />
+                  <TextBlock Text="Events" FontSize="13"
+                             IsVisible="{Binding IsSidebarExpanded}" />
+                </StackPanel>
+              </Button>
+
+              <Button Classes="nav-item"
+                      Command="{Binding NavigateCommand}"
+                      CommandParameter="Config"
+                      ToolTip.Tip="Configuration">
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                  <TextBlock Text="⚙" FontSize="15" Width="20"
+                             TextAlignment="Center" />
+                  <TextBlock Text="Config" FontSize="13"
+                             IsVisible="{Binding IsSidebarExpanded}" />
+                </StackPanel>
+              </Button>
+
+              <Button Classes="nav-item"
+                      Command="{Binding NavigateCommand}"
+                      CommandParameter="Notifier"
+                      ToolTip.Tip="Notifier">
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                  <TextBlock Text="🔔" FontSize="15" Width="20"
+                             TextAlignment="Center" />
+                  <TextBlock Text="Notifier" FontSize="13"
+                             IsVisible="{Binding IsSidebarExpanded}" />
+                </StackPanel>
+              </Button>
+
+            </StackPanel>
+          </DockPanel>
+        </Border>
+
+        <!-- ── MAIN CONTENT ── -->
+        <Border Grid.Row="1" Grid.Column="1"
+                Background="{DynamicResource BgSurfaceBrush}"
+                CornerRadius="0,0,18,0"
+                ClipToBounds="True"
+                Padding="24,20">
+          <ContentControl Content="{Binding CurrentView}"
+                          Classes="view-host"
+                          IsVisible="{Binding IsShell}">
+            <ContentControl.RenderTransform>
+              <TranslateTransform />
+            </ContentControl.RenderTransform>
+            <ContentControl.ContentTemplate>
+              <DataTemplate>
+                <ContentControl Content="{Binding}">
+                  <ContentControl.DataTemplates>
+                    <DataTemplate DataType="vm:DashboardViewModel">
+                      <views:DashboardView />
+                    </DataTemplate>
+                    <DataTemplate DataType="vm:EventsViewModel">
+                      <views:EventsView />
+                    </DataTemplate>
+                    <DataTemplate DataType="vm:ConfigViewModel">
+                      <views:ConfigView />
+                    </DataTemplate>
+                    <DataTemplate DataType="vm:NotifierViewModel">
+                      <views:NotifierView />
+                    </DataTemplate>
+                  </ContentControl.DataTemplates>
+                </ContentControl>
+              </DataTemplate>
+            </ContentControl.ContentTemplate>
+          </ContentControl>
+        </Border>
+
+      </Grid>
+    </Grid>
+  </Border>
+</Window>
