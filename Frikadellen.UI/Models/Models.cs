@@ -140,3 +140,72 @@ public static class Fmt
         return v.ToString("N0");
     }
 }
+
+// ────────── Toast ──────────
+
+public enum ToastType { Success, Warning, Error, Info }
+
+public class ToastItem : INotifyPropertyChanged
+{
+    public string Message { get; set; } = "";
+    public ToastType Type { get; set; }
+    public string TypeIcon => Type switch { ToastType.Success => "✓", ToastType.Warning => "⚠", ToastType.Error => "✕", _ => "ℹ" };
+    public string TypeColor => Type switch { ToastType.Success => "#34D399", ToastType.Warning => "#FBBF24", ToastType.Error => "#F87171", _ => "#38BDF8" };
+    private bool _isVisible = true;
+    public bool IsVisible { get => _isVisible; set { _isVisible = value; OnPropertyChanged(); } }
+    public event PropertyChangedEventHandler? PropertyChanged;
+    protected void OnPropertyChanged([CallerMemberName] string? n = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(n));
+}
+
+// ────────── FlipRecordEx ──────────
+
+public class FlipRecordEx : FlipRecord
+{
+    public string Rarity { get; set; } = "RARE";
+    public string RarityColor => Rarity switch { "COMMON" => "#FFFFFF", "UNCOMMON" => "#55FF55", "RARE" => "#5555FF", "EPIC" => "#AA00AA", "LEGENDARY" => "#FFAA00", "MYTHIC" => "#FF55FF", "SPECIAL" => "#FF5555", _ => "#AAAAAA" };
+    public string ProfitPercent => BuyPrice > 0 ? $"{(Profit * 100.0 / BuyPrice):0.#}%" : "—";
+    public bool IsWin => Profit > 0;
+    public bool IsExpanded { get; set; }
+}
+
+// ────────── BazaarOrder ──────────
+
+public class BazaarOrder
+{
+    public string ItemName { get; set; } = "";
+    public string OrderType { get; set; } = "BUY";
+    public long Price { get; set; }
+    public int Amount { get; set; }
+    public string Status { get; set; } = "ACTIVE";
+    public DateTimeOffset PlacedAt { get; set; }
+    public string StatusColor => Status switch { "FILLED" => "#34D399", "CANCELLED" => "#F87171", _ => "#FBBF24" };
+    public string PriceLabel => Fmt.Coins(Price);
+}
+
+// ────────── AnalyticsData ──────────
+
+public class AnalyticsData
+{
+    public long TotalProfit { get; set; }
+    public long AvgProfitPerFlip { get; set; }
+    public string BestFlipItem { get; set; } = "";
+    public long BestFlipProfit { get; set; }
+    public double FlipsPerHour { get; set; }
+    public double AvgBuySpeedMs { get; set; }
+    public double WinRate { get; set; }
+    public List<(string Item, int Count, long TotalProfit, long AvgProfit, long BestProfit)> TopItems { get; set; } = new();
+}
+
+// ────────── TopItemEntry ──────────
+
+public class TopItemEntry
+{
+    public int Rank { get; set; }
+    public string ItemName { get; set; } = "";
+    public int TimesFlipped { get; set; }
+    public string TotalProfitLabel { get; set; } = "";
+    public string AvgProfitLabel { get; set; } = "";
+    public string BestProfitLabel { get; set; } = "";
+    public string RankColor => Rank switch { 1 => "#FFAA00", 2 => "#C0C0C0", 3 => "#CD7F32", _ => "#6B7280" };
+    public string RankLabel => Rank switch { 1 => "🥇", 2 => "🥈", 3 => "🥉", _ => $"#{Rank}" };
+}

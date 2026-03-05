@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:Frikadellen.UI.ViewModels"
         xmlns:views="using:Frikadellen.UI.Views"
+        xmlns:m="using:Frikadellen.UI.Models"
         x:Class="Frikadellen.UI.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="Frikadellen"
@@ -131,6 +132,10 @@
     </Style>
 
   </Window.Styles>
+
+  <Window.Resources>
+    <vm:StringToBrushConverter x:Key="StrBrush" />
+  </Window.Resources>
 
   <!-- Root: rounded window with drop shadow -->
   <Border CornerRadius="18"
@@ -350,6 +355,26 @@
               </StackPanel>
             </Button>
 
+            <Button Classes="nav-item"
+                    Command="{Binding NavigateCommand}"
+                    CommandParameter="Analytics"
+                    ToolTip.Tip="Analytics">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="📈" FontSize="14" VerticalAlignment="Center" />
+                <TextBlock Text="Analytics" FontSize="13" VerticalAlignment="Center" />
+              </StackPanel>
+            </Button>
+
+            <Button Classes="nav-item"
+                    Command="{Binding NavigateCommand}"
+                    CommandParameter="Bazaar"
+                    ToolTip.Tip="Bazaar">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="📦" FontSize="14" VerticalAlignment="Center" />
+                <TextBlock Text="Bazaar" FontSize="13" VerticalAlignment="Center" />
+              </StackPanel>
+            </Button>
+
           </StackPanel>
         </Border>
 
@@ -384,6 +409,12 @@
                     <DataTemplate DataType="vm:ConsoleViewModel">
                       <views:ConsoleView />
                     </DataTemplate>
+                    <DataTemplate DataType="vm:AnalyticsViewModel">
+                      <views:AnalyticsView />
+                    </DataTemplate>
+                    <DataTemplate DataType="vm:BazaarViewModel">
+                      <views:BazaarView />
+                    </DataTemplate>
                   </ContentControl.DataTemplates>
                 </ContentControl>
               </DataTemplate>
@@ -392,6 +423,30 @@
         </Border>
 
       </Grid>
+
+      <!-- ═══════════════════════════════════════
+           TOAST OVERLAY
+      ═══════════════════════════════════════ -->
+      <Panel IsHitTestVisible="False" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,24,24">
+        <ItemsControl ItemsSource="{Binding ToastService.Toasts}" IsHitTestVisible="False">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="m:ToastItem">
+              <Border Background="#1E1B2E" CornerRadius="10" Padding="14,10" Margin="0,0,0,8"
+                      BorderThickness="1"
+                      BorderBrush="{Binding TypeColor, Converter={StaticResource StrBrush}}"
+                      MinWidth="260" MaxWidth="380">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                  <TextBlock Text="{Binding TypeIcon}" FontSize="16" VerticalAlignment="Center"
+                             Foreground="{Binding TypeColor, Converter={StaticResource StrBrush}}" />
+                  <TextBlock Text="{Binding Message}" FontSize="12" Foreground="#E0E7FF"
+                             VerticalAlignment="Center" TextWrapping="Wrap" />
+                </StackPanel>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </Panel>
+
     </Grid>
   </Border>
 </Window>
