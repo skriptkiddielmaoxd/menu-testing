@@ -130,6 +130,7 @@
               Background="{DynamicResource BgCardBrush}"
               CornerRadius="18"
               Padding="0"
+              ClipToBounds="True"
               Margin="0,0,0,18"
               BoxShadow="0 6 30 0 #30000000, 0 0 1 0 #15E879F9"
               BorderBrush="{DynamicResource BorderSubtleBrush}"
@@ -139,7 +140,7 @@
         <Border.RenderTransform><ScaleTransform /></Border.RenderTransform>
         <StackPanel>
           <!-- Gradient top accent -->
-          <Border Height="2" CornerRadius="18,18,0,0">
+          <Border Height="2">
             <Border.Background>
               <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
                 <GradientStop Color="#E879F9" Offset="0" />
@@ -204,6 +205,7 @@
               <TextBlock Text="SCRIPT STATUS" Classes="section-title" Margin="0" />
               <TextBlock Text="{Binding ScriptState}"
                          FontSize="24" FontWeight="Bold"
+                         TextTrimming="CharacterEllipsis"
                          Foreground="{Binding IsRunning, Converter={StaticResource BoolToRunningColor}}" />
             </StackPanel>
           </Grid>
@@ -226,6 +228,7 @@
               <TextBlock Text="PURSE" Classes="section-title" Margin="0" />
               <TextBlock Text="{Binding Purse}"
                          FontSize="24" FontWeight="Bold"
+                         TextTrimming="CharacterEllipsis"
                          Foreground="{DynamicResource AccentWarningBrush}" />
             </StackPanel>
           </Grid>
@@ -271,6 +274,7 @@
               <TextBlock Text="SESSION PROFIT" Classes="section-title" Margin="0" />
               <TextBlock Text="{Binding SessionProfit}"
                          FontSize="24" FontWeight="Bold"
+                         TextTrimming="CharacterEllipsis"
                          Foreground="{DynamicResource AccentSuccessBrush}" />
               <TextBlock Text="{Binding SessionFlips, StringFormat='{}{0} flips this session'}"
                          FontSize="11"

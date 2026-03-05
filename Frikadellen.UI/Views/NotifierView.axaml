@@ -84,12 +84,13 @@
       <!-- ════ DISCORD BOT ════ -->
       <Border Classes="card notif-card-1"
               Padding="0"
+              ClipToBounds="True"
               RenderTransformOrigin="0.5,1"
               Opacity="0">
         <Border.RenderTransform><TranslateTransform /></Border.RenderTransform>
         <StackPanel>
           <!-- Gradient accent top -->
-          <Border Height="2" CornerRadius="16,16,0,0">
+          <Border Height="2">
             <Border.Background>
               <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
                 <GradientStop Color="#5865F2" Offset="0" />
@@ -172,11 +173,12 @@
       <!-- ════ WEBHOOK ════ -->
       <Border Classes="card notif-card-2"
               Padding="0"
+              ClipToBounds="True"
               RenderTransformOrigin="0.5,1"
               Opacity="0">
         <Border.RenderTransform><TranslateTransform /></Border.RenderTransform>
         <StackPanel>
-          <Border Height="2" CornerRadius="16,16,0,0">
+          <Border Height="2">
             <Border.Background>
               <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
                 <GradientStop Color="#4ADE80" Offset="0" />
@@ -222,11 +224,12 @@
       <!-- ════ COMMANDS QUICK REFERENCE ════ -->
       <Border Classes="card notif-card-3"
               Padding="0"
+              ClipToBounds="True"
               RenderTransformOrigin="0.5,1"
               Opacity="0">
         <Border.RenderTransform><TranslateTransform /></Border.RenderTransform>
         <StackPanel>
-          <Border Height="2" CornerRadius="16,16,0,0">
+          <Border Height="2">
             <Border.Background>
               <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
                 <GradientStop Color="#FB923C" Offset="0" />
