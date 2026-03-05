@@ -69,11 +69,12 @@ public class DonutChartControl : Control
         var p4 = new Point(cx + innerR * Math.Cos(sa), cy + innerR * Math.Sin(sa));
 
         var geo = new PathGeometry();
-        var fig = new PathFigure { StartPoint = p1, IsClosed = true };
-        fig.Segments!.Add(new ArcSegment { Point = p2, Size = new Size(outerR, outerR), SweepDirection = SweepDirection.Clockwise, IsLargeArc = isLarge });
+        var fig = new PathFigure { StartPoint = p1, IsClosed = true, Segments = new PathSegments() };
+        fig.Segments.Add(new ArcSegment { Point = p2, Size = new Size(outerR, outerR), SweepDirection = SweepDirection.Clockwise, IsLargeArc = isLarge });
         fig.Segments.Add(new LineSegment { Point = p3 });
         fig.Segments.Add(new ArcSegment { Point = p4, Size = new Size(innerR, innerR), SweepDirection = SweepDirection.CounterClockwise, IsLargeArc = isLarge });
-        geo.Figures!.Add(fig);
+        geo.Figures ??= new PathFigures();
+        geo.Figures.Add(fig);
 
         ctx.DrawGeometry(new SolidColorBrush(color), null, geo);
     }

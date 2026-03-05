@@ -19,9 +19,9 @@ public class ToastService
         {
             Toasts.Add(toast);
             var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
-            timer.Tick += (_, _) =>
+            timer.Tick += (s, _) =>
             {
-                timer.Stop();
+                (s as DispatcherTimer)?.Stop();
                 Toasts.Remove(toast);
             };
             timer.Start();

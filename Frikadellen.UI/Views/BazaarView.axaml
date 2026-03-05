@@ -83,6 +83,14 @@
         </Border>
       </Grid>
 
+      <!-- Hourly Profit Comparison (AH vs Bazaar) -->
+      <Border Background="#0DFFFFFF" CornerRadius="12" Padding="16">
+        <StackPanel Spacing="8">
+          <TextBlock Text="Hourly Profit (Bazaar)" FontSize="14" FontWeight="Bold" Foreground="#E0E7FF" />
+          <ctrl:BarChartControl Values="{Binding AhVsBazaarData}" Height="120" HighlightIndex="{Binding CurrentHour}" />
+        </StackPanel>
+      </Border>
+
     </StackPanel>
   </ScrollViewer>
 </UserControl>

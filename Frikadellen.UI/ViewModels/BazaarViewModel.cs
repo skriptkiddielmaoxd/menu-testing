@@ -11,6 +11,7 @@ public sealed class BazaarViewModel : ViewModelBase
     public ObservableCollection<BazaarOrder> ActiveOrders { get; } = new();
     public ObservableCollection<FlipRecord>  BazaarFlips  { get; } = new();
     public List<double> AhVsBazaarData { get; } = new();
+    public int CurrentHour { get; } = DateTime.Now.Hour;
 
     public BazaarViewModel()
     {
