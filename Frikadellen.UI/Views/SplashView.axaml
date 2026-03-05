@@ -1,0 +1,243 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Frikadellen.UI.ViewModels"
+             x:Class="Frikadellen.UI.Views.SplashView"
+             x:DataType="vm:SplashViewModel">
+
+  <UserControl.Styles>
+
+    <!-- Logo bounce-in -->
+    <Style Selector="Border.logo-mark">
+      <Style.Animations>
+        <Animation Duration="0:0:0.7" Easing="BackEaseOut" FillMode="Forward">
+          <KeyFrame Cue="0%">
+            <Setter Property="Opacity" Value="0" />
+            <Setter Property="ScaleTransform.ScaleX" Value="0.3" />
+            <Setter Property="ScaleTransform.ScaleY" Value="0.3" />
+          </KeyFrame>
+          <KeyFrame Cue="100%">
+            <Setter Property="Opacity" Value="1" />
+            <Setter Property="ScaleTransform.ScaleX" Value="1" />
+            <Setter Property="ScaleTransform.ScaleY" Value="1" />
+          </KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
+
+    <!-- Title reveal -->
+    <Style Selector="TextBlock.splash-title">
+      <Style.Animations>
+        <Animation Duration="0:0:0.6" Delay="0:0:0.4" Easing="CubicEaseOut" FillMode="Forward">
+          <KeyFrame Cue="0%">
+            <Setter Property="Opacity" Value="0" />
+            <Setter Property="TranslateTransform.Y" Value="20" />
+          </KeyFrame>
+          <KeyFrame Cue="100%">
+            <Setter Property="Opacity" Value="1" />
+            <Setter Property="TranslateTransform.Y" Value="0" />
+          </KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
+
+    <!-- Tagline reveal -->
+    <Style Selector="TextBlock.splash-tagline">
+      <Style.Animations>
+        <Animation Duration="0:0:0.5" Delay="0:0:0.65" Easing="CubicEaseOut" FillMode="Forward">
+          <KeyFrame Cue="0%">
+            <Setter Property="Opacity" Value="0" />
+            <Setter Property="TranslateTransform.Y" Value="12" />
+          </KeyFrame>
+          <KeyFrame Cue="100%">
+            <Setter Property="Opacity" Value="1" />
+            <Setter Property="TranslateTransform.Y" Value="0" />
+          </KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
+
+    <!-- Progress bar container reveal -->
+    <Style Selector="Border.progress-wrap">
+      <Style.Animations>
+        <Animation Duration="0:0:0.4" Delay="0:0:0.9" Easing="CubicEaseOut" FillMode="Forward">
+          <KeyFrame Cue="0%">
+            <Setter Property="Opacity" Value="0" />
+          </KeyFrame>
+          <KeyFrame Cue="100%">
+            <Setter Property="Opacity" Value="1" />
+          </KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
+
+    <!-- Status text reveal -->
+    <Style Selector="TextBlock.status-text">
+      <Style.Animations>
+        <Animation Duration="0:0:0.4" Delay="0:0:1.0" Easing="CubicEaseOut" FillMode="Forward">
+          <KeyFrame Cue="0%">
+            <Setter Property="Opacity" Value="0" />
+          </KeyFrame>
+          <KeyFrame Cue="100%">
+            <Setter Property="Opacity" Value="1" />
+          </KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
+
+    <!-- Version tag reveal -->
+    <Style Selector="TextBlock.version-tag">
+      <Style.Animations>
+        <Animation Duration="0:0:0.4" Delay="0:0:0.8" Easing="CubicEaseOut" FillMode="Forward">
+          <KeyFrame Cue="0%">
+            <Setter Property="Opacity" Value="0" />
+          </KeyFrame>
+          <KeyFrame Cue="100%">
+            <Setter Property="Opacity" Value="1" />
+          </KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
+
+  </UserControl.Styles>
+
+  <!-- Full-screen splash background -->
+  <Grid Background="{DynamicResource BgBaseBrush}">
+
+    <!-- Subtle radial glow behind logo -->
+    <Ellipse Width="400" Height="400"
+             HorizontalAlignment="Center"
+             VerticalAlignment="Center"
+             Margin="0,-80,0,0">
+      <Ellipse.Fill>
+        <RadialGradientBrush>
+          <GradientStop Color="#20818CF8" Offset="0" />
+          <GradientStop Color="#00818CF8" Offset="1" />
+        </RadialGradientBrush>
+      </Ellipse.Fill>
+    </Ellipse>
+
+    <!-- Secondary glow -->
+    <Ellipse Width="200" Height="200"
+             HorizontalAlignment="Center"
+             VerticalAlignment="Center"
+             Margin="0,-80,0,0">
+      <Ellipse.Fill>
+        <RadialGradientBrush>
+          <GradientStop Color="#1838BDF8" Offset="0" />
+          <GradientStop Color="#0038BDF8" Offset="1" />
+        </RadialGradientBrush>
+      </Ellipse.Fill>
+    </Ellipse>
+
+    <!-- Centred splash content -->
+    <StackPanel HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Spacing="0">
+
+      <!-- Logo mark -->
+      <Border Classes="logo-mark"
+              Width="84" Height="84"
+              CornerRadius="24"
+              Background="#15818CF8"
+              BorderBrush="#40818CF8"
+              BorderThickness="1.5"
+              HorizontalAlignment="Center"
+              BoxShadow="0 0 40 0 #50818CF8, 0 0 80 0 #2038BDF8"
+              RenderTransformOrigin="0.5,0.5">
+        <Border.RenderTransform>
+          <ScaleTransform />
+        </Border.RenderTransform>
+        <!-- Diamond / star mark -->
+        <Grid>
+          <!-- Outer ring -->
+          <Ellipse Width="44" Height="44"
+                   Stroke="#50818CF8" StrokeThickness="1"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center" />
+          <!-- Icon -->
+          <TextBlock Text="✦"
+                     FontSize="36"
+                     Foreground="{DynamicResource AccentPrimaryBrush}"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center"
+                     FontWeight="Bold" />
+        </Grid>
+      </Border>
+
+      <Border Height="24" />
+
+      <!-- App title -->
+      <TextBlock Classes="splash-title"
+                 Text="FRIKADELLEN"
+                 FontSize="36"
+                 FontWeight="Bold"
+                 LetterSpacing="6"
+                 Foreground="{DynamicResource TextPrimaryBrush}"
+                 HorizontalAlignment="Center"
+                 Opacity="0">
+        <TextBlock.RenderTransform>
+          <TranslateTransform />
+        </TextBlock.RenderTransform>
+      </TextBlock>
+
+      <Border Height="8" />
+
+      <!-- Tagline -->
+      <TextBlock Classes="splash-tagline"
+                 Text="Hypixel Skyblock Automation"
+                 FontSize="13"
+                 Foreground="{DynamicResource TextMutedBrush}"
+                 HorizontalAlignment="Center"
+                 LetterSpacing="2"
+                 Opacity="0">
+        <TextBlock.RenderTransform>
+          <TranslateTransform />
+        </TextBlock.RenderTransform>
+      </TextBlock>
+
+      <Border Height="48" />
+
+      <!-- Progress bar -->
+      <Border Classes="progress-wrap" Width="280" Opacity="0">
+        <StackPanel Spacing="10">
+          <!-- Track -->
+          <ProgressBar Value="{Binding Progress}"
+                       Minimum="0" Maximum="1"
+                       Height="4"
+                       CornerRadius="2"
+                       Background="#1E2A3B"
+                       Foreground="{DynamicResource AccentPrimaryBrush}" />
+
+          <!-- Status text -->
+          <TextBlock Classes="status-text"
+                     Text="{Binding StatusMessage}"
+                     FontSize="11"
+                     Foreground="{DynamicResource TextMutedBrush}"
+                     HorizontalAlignment="Center"
+                     Opacity="0" />
+        </StackPanel>
+      </Border>
+
+    </StackPanel>
+
+    <!-- Version tag bottom-right -->
+    <TextBlock Classes="version-tag"
+               Text="{Binding AppVersion}"
+               FontSize="11"
+               Foreground="{DynamicResource TextMutedBrush}"
+               HorizontalAlignment="Right"
+               VerticalAlignment="Bottom"
+               Margin="0,0,20,16"
+               Opacity="0" />
+
+    <!-- Bottom left: copyright -->
+    <TextBlock Text="frikadellen-fancy"
+               FontSize="11"
+               Foreground="{DynamicResource TextMutedBrush}"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Bottom"
+               Margin="20,0,0,16"
+               Opacity="0.5" />
+
+  </Grid>
+</UserControl>
