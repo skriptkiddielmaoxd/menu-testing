@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Avalonia.Threading;
@@ -88,6 +89,12 @@ public sealed class DashboardViewModel : ViewModelBase
         IsRunning ? "0 4 20 0 #60FB7185" : "0 4 20 0 #60E879F9";
 
     public ObservableCollection<FlipRecord> RecentFlips { get; } = new();
+
+    public List<double> ProfitTimeline { get; } = MockDataService.GetProfitTimeline();
+    public List<double> HourlyEarnings { get; } = MockDataService.GetHourlyEarnings();
+    public double DonutSuccessRate => _sessionFlips > 0 ? (double)_sessionWins / _sessionFlips : 0.87;
+    public double DonutFailRate    => _sessionFlips > 0 ? 1.0 - DonutSuccessRate - DonutPendingRate : 0.10;
+    public double DonutPendingRate => 0.03;
 
     public ICommand ToggleCommand { get; }
 

@@ -25,11 +25,13 @@ public sealed class MainWindowViewModel : ViewModelBase
     private string _statusText = "Stopped";
 
     // Child view-models (lazy)
-    private DashboardViewModel? _dashboard;
-    private EventsViewModel?    _events;
-    private ConfigViewModel?    _config;
-    private NotifierViewModel?  _notifier;
-    private ConsoleViewModel?   _console;
+    private DashboardViewModel?  _dashboard;
+    private EventsViewModel?     _events;
+    private ConfigViewModel?     _config;
+    private NotifierViewModel?   _notifier;
+    private ConsoleViewModel?    _console;
+    private AnalyticsViewModel?  _analytics;
+    private BazaarViewModel?     _bazaar;
 
     public MainWindowViewModel()
     {
@@ -114,6 +116,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     public ICommand NavigateCommand { get; }
     public ICommand ToggleSidebarCommand { get; }
     public ICommand ToggleThemeCommand { get; }
+    public Services.ToastService ToastService { get; } = Services.ToastService.Instance;
 
     // ── Lifecycle ──
 
@@ -154,11 +157,13 @@ public sealed class MainWindowViewModel : ViewModelBase
         ActiveNav = target ?? "Dashboard";
         CurrentView = target switch
         {
-            "Events"   => _events   ??= new EventsViewModel(),
-            "Config"   => _config   ??= new ConfigViewModel(_settings),
-            "Notifier" => _notifier ??= new NotifierViewModel(_settings),
-            "Console"  => _console  ??= new ConsoleViewModel(_launcher),
-            _          => _dashboard ??= new DashboardViewModel(),
+            "Events"    => _events    ??= new EventsViewModel(),
+            "Config"    => _config    ??= new ConfigViewModel(_settings),
+            "Notifier"  => _notifier  ??= new NotifierViewModel(_settings),
+            "Console"   => _console   ??= new ConsoleViewModel(_launcher),
+            "Analytics" => _analytics ??= new AnalyticsViewModel(),
+            "Bazaar"    => _bazaar    ??= new BazaarViewModel(),
+            _           => _dashboard ??= new DashboardViewModel(),
         };
     }
 

@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Frikadellen.UI.ViewModels"
              xmlns:m="using:Frikadellen.UI.Models"
+             xmlns:ctrl="using:Frikadellen.UI.Controls"
              x:Class="Frikadellen.UI.Views.DashboardView"
              x:DataType="vm:DashboardViewModel">
 
@@ -493,6 +494,31 @@
 
         </StackPanel>
       </Border>
+
+      <!-- Charts section -->
+      <Grid ColumnDefinitions="*,Auto,Auto">
+        <Border Grid.Column="0" Background="#0DFFFFFF" CornerRadius="12" Padding="16" Margin="0,0,12,0">
+          <StackPanel Spacing="8">
+            <TextBlock Text="Profit Timeline" FontSize="13" FontWeight="SemiBold" Foreground="#E0E7FF" />
+            <ctrl:LineChartControl DataPoints="{Binding ProfitTimeline}" Height="120" />
+          </StackPanel>
+        </Border>
+        <Border Grid.Column="1" Background="#0DFFFFFF" CornerRadius="12" Padding="16" Margin="0,0,12,0" Width="200">
+          <StackPanel Spacing="8">
+            <TextBlock Text="Hourly Earnings" FontSize="13" FontWeight="SemiBold" Foreground="#E0E7FF" />
+            <ctrl:BarChartControl Values="{Binding HourlyEarnings}" Height="120" />
+          </StackPanel>
+        </Border>
+        <Border Grid.Column="2" Background="#0DFFFFFF" CornerRadius="12" Padding="16" Width="160">
+          <StackPanel Spacing="8" HorizontalAlignment="Center">
+            <TextBlock Text="Win Rate" FontSize="13" FontWeight="SemiBold" Foreground="#E0E7FF" HorizontalAlignment="Center" />
+            <ctrl:DonutChartControl Width="120" Height="120"
+                                    SuccessRate="{Binding DonutSuccessRate}"
+                                    FailRate="{Binding DonutFailRate}"
+                                    PendingRate="{Binding DonutPendingRate}" />
+          </StackPanel>
+        </Border>
+      </Grid>
 
     </StackPanel>
   </ScrollViewer>
