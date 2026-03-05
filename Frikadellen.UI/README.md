@@ -1,6 +1,6 @@
 # Frikadellen UI – Overhauled Avalonia Desktop UI
 
-A complete visual overhaul of the Frikadellen Avalonia desktop UI, built for easy merge into `frikadellen-fancy`. All backend logic has been stubbed out with clear `// INTEGRATION POINT` comments — drop in the real `BackendClient`, `BackendSocket` and `RustProcessLauncher` calls to go live.
+A complete visual overhaul of the Frikadellen Avalonia desktop UI, built for easy merge into `frikadellen-fancy`. Backend services are fully wired up via `BackendClient` (HTTP REST), `BackendSocket` (WebSocket), and `RustProcessLauncher` (process management). When the Rust backend is not running, the UI falls back to mock data so development stays productive.
 
 ---
 
@@ -8,57 +8,53 @@ A complete visual overhaul of the Frikadellen Avalonia desktop UI, built for eas
 
 | Attribute | Detail |
 |---|---|
-| Theme | Deep midnight-navy dark (`#0A0F1E` base) |
-| Accent | Indigo/violet `#818CF8` + sky-blue `#38BDF8` |
-| Corners | 12–24 px radius **everywhere** — zero sharp corners |
+| Theme | Deep midnight-navy dark (`#08060D` base) with fuchsia/cyan/orange accents |
+| Corners | 12–24 px radius everywhere — zero sharp corners |
 | Font | Inter (bundled via `Avalonia.Fonts.Inter`) |
-| Animations | Splash bounce-in, staggered card entrance, sidebar width transition, button colour morph, view fade+slide |
+| Animations | Splash progress, staggered card entrance, view fade+slide, button colour morph |
 
 ---
 
 ## Screens
 
 ### Splash Screen
-- Logo mark scales in with a `BackEaseOut` spring bounce
-- `FRIKADELLEN` title slides up and fades in
-- Tagline and progress bar reveal with staggered delays
-- Shimmer gradient progress bar (`#818CF8 → #38BDF8`)
-- "Ready." status then transitions to the main shell
+- Animated progress bar with step messages (loading config, connecting to backend, ready)
+- Transitions to Login on first run, otherwise directly to the Dashboard
 
 ### Account Setup (Login)
-- Shown on first run (when `config/ui-settings.json → FirstRunComplete: false`)
-- Card slides up from below with `CubicEaseOut`
-- Form fields stagger in individually
-- `Connect Account` → fires Microsoft device-code auth (INTEGRATION POINT)
-- `Skip for now` → proceeds directly to main shell
+- Shown on first run (`config/ui-settings.json → FirstRunComplete: false`)
+- Collect Minecraft username; skip option for later setup
+- `Connect Account` fires the Microsoft device-code auth flow (stub — add real flow in `LoginViewModel.Proceed()`)
 
 ### Main Shell
-- **Custom chrome**: no native title bar; draggable top bar with logo, status chip, theme toggle, min/max/close
-- **Collapsible sidebar**: 220 px expanded / 60 px collapsed; smooth width transition
-- **Page transitions**: fade + 16 px slide-up per view change
+- **Custom chrome**: no native title bar; draggable top bar with logo, live status chip, theme toggle, min/max/close
+- **Horizontal navigation bar**: Dashboard, Events, Config, Notifier, Console
+- **Page transitions**: fade + slide-up per view change
 
 ### Dashboard
-- Live **stat cards** (Script state, Purse, Queue depth, Session profit) with staggered entrance
-- Big pill **Start / Stop** button with colour-morph transition (violet ↔ red)
-- **Latest Flip** highlight card
-- **Recent Flips** table with item, buy/sell prices, profit (+colour), speed badge
-- Empty state with friendly placeholder when no flips yet
-- Keyboard shortcuts: `Ctrl+S` = Start, `Ctrl+T` = Stop
+- Live **stat cards** (Script state, Purse, Queue depth, Session profit)
+- **Start / Stop** button wired to `BackendClient.StartBotAsync()` / `StopBotAsync()`
+- Stats polled from `GET /api/stats` every 3 s while running
+- Live flips streamed via WebSocket `flip_received` events
+- Falls back to mock data while the backend is unreachable
 
 ### Events
-- Slide-in feed of purchases, sales, bazaar trades, listings and errors
-- Type badge + timestamp per row
-- Right panel shows expanded detail for selected event
+- Real-time feed from WebSocket (`item_purchased`, `item_sold`, `bazaar_trade`, `error`)
+- Type badge + timestamp per row; click to expand detail
+- Falls back to mock events while the backend is unreachable
 
 ### Config
-- Grouped settings cards: Flip Modes, Timing & Delays, Behaviour, Skip Filter, Network
+- Grouped settings: Flip Modes, Timing & Delays, Behaviour, Skip Filter, Network, Anti-Detection
 - All fields bound to `UiSettings` and saved to `config/ui-settings.json`
 - Save button with "Saved ✓" flash confirmation
 
 ### Notifier
-- Discord bot token field with show/hide toggle
-- Channel ID, Webhook URL inputs
-- Bot command quick-reference table (`!start`, `!stop`, `!status`)
+- Discord bot token (show/hide toggle), Channel ID, Webhook URL
+- Persisted to `config/ui-settings.json`
+
+### Console
+- Live stdout/stderr from the Rust binary via `RustProcessLauncher`
+- Start / Stop / Clear controls; monospace font with colour-coded stderr
 
 ---
 
@@ -70,10 +66,10 @@ A complete visual overhaul of the Frikadellen Avalonia desktop UI, built for eas
 # Build
 dotnet build Frikadellen.UI/Frikadellen.UI.sln
 
-# Run (dev)
+# Run (dev — shows mock data when backend is offline)
 dotnet run --project Frikadellen.UI/Frikadellen.UI.csproj
 
-# Publish single-file Windows exe
+# Publish self-contained Windows executable
 dotnet publish Frikadellen.UI/Frikadellen.UI.csproj \
   -c Release -r win-x64 \
   -p:SelfContained=true \
@@ -82,17 +78,44 @@ dotnet publish Frikadellen.UI/Frikadellen.UI.csproj \
 
 ---
 
-## Integration Guide
+## Integration with frikadellen-fancy
 
-Search for `// INTEGRATION POINT` across the ViewModels — each comment describes exactly what real call to substitute:
+The UI connects to `http://localhost:<WebGuiPort>` (default **8080**, configurable in Config → Network).
 
-| File | What to plug in |
-|---|---|
-| `MainWindowViewModel.cs` | `_launcher.Start()` / `_socket.ConnectAsync()` / `_launcher.Stop()` |
-| `LoginViewModel.cs` | Real Microsoft device-code auth flow |
-| `DashboardViewModel.cs` | Wire `ToggleRequested` to `MainWindowViewModel.StartScript/StopScript` |
+| Service | File | What it does |
+|---|---|---|
+| `BackendClient` | `Services/BackendClient.cs` | HTTP REST client — status, stats, flips, start/stop, config |
+| `BackendSocket` | `Services/BackendSocket.cs` | WebSocket client — real-time flip/event/state stream, auto-reconnect |
+| `RustProcessLauncher` | `Services/RustProcessLauncher.cs` | Spawns the Rust binary, streams stdout/stderr to the Console view |
 
-The `SettingsService` already reads/writes `config/ui-settings.json` — replace/extend `UiSettings` to match your real `config.toml` schema.
+### Backend REST API expected
+
+| Method | Path | Used by |
+|---|---|---|
+| `GET` | `/api/status` | Status polling |
+| `GET` | `/api/stats` | Dashboard stat cards (every 3 s) |
+| `GET` | `/api/flips` | Recent flips table |
+| `POST` | `/api/start` | Start button |
+| `POST` | `/api/stop` | Stop button |
+| `GET` | `/api/config` | Config screen load |
+| `POST` | `/api/config` | Config screen save |
+
+### Backend WebSocket events expected (`ws://localhost:<port>/ws`)
+
+| `type` field | Payload fields | Handler |
+|---|---|---|
+| `flip_received` | `item`, `buy_price`, `sell_price`, `buy_speed_ms`, `finder`, `item_tag` | Dashboard flip table |
+| `item_purchased` | `item`, `price` | Events feed |
+| `item_sold` | `item`, `price`, `profit` | Events feed |
+| `bazaar_trade` | `item`, `side`, `quantity`, `price_per_unit` | Events feed |
+| `state_change` | `state`, `purse`, `queue_depth` | Status chip + dashboard stats |
+| `error` | `message` | Events feed |
+
+### Remaining stubs to complete
+
+| File | Location | What to plug in |
+|---|---|---|
+| `LoginViewModel.cs` | `Proceed()` | Real Microsoft device-code auth flow |
 
 ---
 
@@ -105,16 +128,20 @@ Frikadellen.UI/
 ├── App.axaml / .cs                   global theme + startup
 ├── Models/Models.cs                  EventItem, FlipRecord, UiSettings, Fmt
 ├── Services/
-│   ├── MockDataService.cs            random events/flips for demo
-│   └── SettingsService.cs            JSON persistence
+│   ├── BackendClient.cs              HTTP REST client
+│   ├── BackendSocket.cs              WebSocket client with auto-reconnect
+│   ├── MockDataService.cs            random events/flips for offline demo
+│   ├── RustProcessLauncher.cs        spawns + monitors the Rust binary
+│   └── SettingsService.cs            JSON persistence → config/ui-settings.json
 ├── ViewModels/
-│   ├── MainWindowViewModel.cs        root lifecycle: Splash → Login → Shell
+│   ├── MainWindowViewModel.cs        root lifecycle + backend wiring
 │   ├── SplashViewModel.cs            animated progress steps
 │   ├── LoginViewModel.cs             first-run account setup
 │   ├── DashboardViewModel.cs         stats, toggle, flip feed
 │   ├── EventsViewModel.cs            live event collection
 │   ├── ConfigViewModel.cs            all config.toml fields
 │   ├── NotifierViewModel.cs          Discord bot + webhook
+│   ├── ConsoleViewModel.cs           process console log
 │   └── BoolToStringConverter.cs      IValueConverter helpers
 └── Views/
     ├── MainWindow.axaml/.cs          custom chrome + phase routing
@@ -123,5 +150,7 @@ Frikadellen.UI/
     ├── DashboardView.axaml/.cs
     ├── EventsView.axaml/.cs
     ├── ConfigView.axaml/.cs
-    └── NotifierView.axaml/.cs
+    ├── NotifierView.axaml/.cs
+    └── ConsoleView.axaml/.cs
 ```
+

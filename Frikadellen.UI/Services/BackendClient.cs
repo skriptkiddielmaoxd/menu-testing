@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Frikadellen.UI.Models;
@@ -87,15 +88,55 @@ public sealed class BackendClient : IDisposable
         catch { return Array.Empty<FlipDto>(); }
     }
 
+    // ── Bot control ──
+
+    /// <summary>POST /api/start — starts the bot. Returns false on network error.</summary>
+    public async Task<bool> StartBotAsync(CancellationToken ct = default)
+    {
+        try
+        {
+            var r = await _http.PostAsync("/api/start", content: null, ct);
+            return r.IsSuccessStatusCode;
+        }
+        catch { return false; }
+    }
+
+    /// <summary>POST /api/stop — stops the bot. Returns false on network error.</summary>
+    public async Task<bool> StopBotAsync(CancellationToken ct = default)
+    {
+        try
+        {
+            var r = await _http.PostAsync("/api/stop", content: null, ct);
+            return r.IsSuccessStatusCode;
+        }
+        catch { return false; }
+    }
+
     // ── Config ──
+
+    /// <summary>GET /api/config — returns a raw JSON element, or null when offline.</summary>
+    public async Task<JsonElement?> GetConfigAsync(CancellationToken ct = default)
+    {
+        try
+        {
+            await using var stream = await _http.GetStreamAsync("/api/config", ct).ConfigureAwait(false);
+            var doc = await JsonDocument.ParseAsync(stream, cancellationToken: ct).ConfigureAwait(false);
+            return doc.RootElement.Clone();
+        }
+        catch { return null; }
+    }
+
+    /// <summary>POST /api/config — pushes an updated config object. Silently swallows errors.</summary>
+    public async Task PostConfigAsync(object configDto, CancellationToken ct = default)
+    {
+        try { await _http.PostAsJsonAsync("/api/config", configDto, ct); }
+        catch { }
+    }
 
     /// <summary>PUT /api/config — fire-and-forget; silently swallows errors.</summary>
     public async Task PutConfigAsync(object configDto, CancellationToken ct = default)
     {
-        try
-        {
-            await _http.PutAsJsonAsync("/api/config", configDto, ct);
-        }
+        try { await _http.PutAsJsonAsync("/api/config", configDto, ct); }
         catch { /* backend offline – ignore */ }
     }
 

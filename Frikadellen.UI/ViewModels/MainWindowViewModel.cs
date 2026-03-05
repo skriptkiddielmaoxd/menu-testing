@@ -1,5 +1,7 @@
 using System;
 using System.Windows.Input;
+using Avalonia.Threading;
+using Frikadellen.UI.Models;
 using Frikadellen.UI.Services;
 
 namespace Frikadellen.UI.ViewModels;
@@ -8,10 +10,12 @@ namespace Frikadellen.UI.ViewModels;
 /// Root view-model that drives the entire window lifecycle:
 ///   Splash → (optional) Login → Shell (sidebar + pages)
 /// </summary>
-public sealed class MainWindowViewModel : ViewModelBase
+public sealed class MainWindowViewModel : ViewModelBase, IDisposable
 {
     private readonly SettingsService     _settings = new();
     private readonly RustProcessLauncher _launcher = new();
+    private readonly BackendClient       _client;
+    private readonly BackendSocket       _socket;
 
     // ── Phase tracking ──
     public enum Phase { Splash, Login, Shell }
@@ -24,6 +28,9 @@ public sealed class MainWindowViewModel : ViewModelBase
     private string _activeNav = "Dashboard";
     private string _statusText = "Stopped";
 
+    // ── Polling ──
+    private DispatcherTimer? _pollTimer;
+
     // Child view-models (lazy)
     private DashboardViewModel?  _dashboard;
     private EventsViewModel?     _events;
@@ -35,6 +42,19 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel()
     {
+        // Initialise backend services using the persisted port
+        var saved = _settings.Load();
+        var port  = saved.WebGuiPort > 0 ? saved.WebGuiPort : 8080;
+        _client = new BackendClient($"http://localhost:{port}");
+        _socket = new BackendSocket($"ws://localhost:{port}/ws");
+
+        // Wire socket events (lambdas capture fields, so they always reach the
+        // current child-VM without requiring an explicit re-subscribe)
+        _socket.FlipReceived           += flip => _dashboard?.TrackFlip(flip);
+        _socket.EventReceived          += evt  => _events?.AddEvent(evt);
+        _socket.StateChanged           += HandleStateChange;
+        _socket.ConnectionStateChanged += HandleSocketConnection;
+
         // Start with splash
         var splash = new SplashViewModel();
         splash.Completed += OnSplashCompleted;
@@ -108,9 +128,9 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     public string StatusChipColor => StatusText switch
     {
-        "Running"     => "#4ADE80",
+        "Running"                              => "#4ADE80",
         var s when s.StartsWith("Starting") => "#FBBF24",
-        _             => "#FB7185",
+        _                                      => "#FB7185",
     };
 
     public ICommand NavigateCommand { get; }
@@ -125,7 +145,6 @@ public sealed class MainWindowViewModel : ViewModelBase
         var saved = _settings.Load();
         if (!saved.FirstRunComplete)
         {
-            // Show the login / setup screen on first run
             var login = new LoginViewModel(_settings, saved);
             login.Completed += OnLoginCompleted;
             CurrentPhase = Phase.Login;
@@ -137,17 +156,25 @@ public sealed class MainWindowViewModel : ViewModelBase
         }
     }
 
-    private void OnLoginCompleted()
-    {
-        TransitionToShell();
-    }
+    private void OnLoginCompleted() => TransitionToShell();
 
     private void TransitionToShell()
     {
         CurrentPhase = Phase.Shell;
-        _dashboard  ??= new DashboardViewModel();
-        CurrentView  = _dashboard;
-        ActiveNav    = "Dashboard";
+
+        if (_dashboard is null)
+        {
+            _dashboard = new DashboardViewModel();
+            // Wire the toggle button to real backend control
+            _dashboard.ToggleRequested += isRunning =>
+            {
+                if (isRunning) StartScript();
+                else           StopScript();
+            };
+        }
+
+        CurrentView = _dashboard;
+        ActiveNav   = "Dashboard";
     }
 
     // ── Navigation ──
@@ -167,24 +194,87 @@ public sealed class MainWindowViewModel : ViewModelBase
         };
     }
 
-    // ── Script control (INTEGRATION POINT) ──
+    // ── Script control ──
 
     /// <summary>
-    /// Start the Rust backend process and connect the WebSocket.
-    /// Replace the body with real BackendClient / process launcher calls.
+    /// Connects the WebSocket, POSTs /api/start, and begins REST polling.
     /// </summary>
-    public void StartScript()
+    public async void StartScript()
     {
         StatusText = "Starting…";
         OnPropertyChanged(nameof(StatusChipColor));
-        // INTEGRATION POINT: _launcher.Start(); _socket.ConnectAsync();
+
+        _socket.Connect();
+        await _client.StartBotAsync();
+        StartPolling();
     }
 
-    /// <summary>Stop the Rust backend process and disconnect the WebSocket.</summary>
-    public void StopScript()
+    /// <summary>
+    /// POSTs /api/stop, disconnects the WebSocket, and stops polling.
+    /// </summary>
+    public async void StopScript()
     {
         StatusText = "Stopped";
         OnPropertyChanged(nameof(StatusChipColor));
-        // INTEGRATION POINT: _socket.Disconnect(); _launcher.Stop();
+
+        StopPolling();
+        await _client.StopBotAsync();
+        _socket.Disconnect();
+    }
+
+    // ── REST polling ──
+
+    private void StartPolling()
+    {
+        if (_pollTimer is not null) return;
+        _pollTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
+        _pollTimer.Tick += OnPollTick;
+        _pollTimer.Start();
+    }
+
+    private void StopPolling()
+    {
+        _pollTimer?.Stop();
+        _pollTimer = null;
+    }
+
+    private async void OnPollTick(object? sender, EventArgs e)
+    {
+        var stats = await _client.GetStatsAsync();
+        if (stats is not null && _dashboard is not null)
+            _dashboard.ApplyStats(stats);
+    }
+
+    // ── Socket event handlers ──
+
+    private void HandleStateChange(WsStateChange sc)
+    {
+        StatusText = sc.State == "Running" ? "Running" : "Stopped";
+        OnPropertyChanged(nameof(StatusChipColor));
+
+        if (_dashboard is null) return;
+        var purse     = sc.Purse.HasValue ? Fmt.Coins(sc.Purse.Value) : _dashboard.Purse;
+        var queue     = sc.QueueDepth ?? _dashboard.QueueDepth;
+        var botStatus = sc.State == "Running" ? "Online" : "Offline";
+        _dashboard.UpdateFromStatus(sc.State, purse, queue, botStatus);
+    }
+
+    private void HandleSocketConnection(bool connected)
+    {
+        if (!connected) return;
+        // Real backend is live — stop mock data generators
+        _dashboard?.DisableMockMode();
+        _events?.DisableMockMode();
+    }
+
+    // ── Cleanup ──
+
+    public void Dispose()
+    {
+        StopPolling();
+        _socket.Dispose();
+        _client.Dispose();
+        _launcher.Dispose();
     }
 }
+
