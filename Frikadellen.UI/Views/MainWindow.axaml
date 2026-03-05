@@ -17,13 +17,65 @@
 
   <Window.Styles>
 
+    <!-- ═══ ANIMATED BACKGROUND ORBS ═══ -->
+    <Style Selector="Ellipse.orb-fuchsia">
+      <Style.Animations>
+        <Animation Duration="0:0:16" IterationCount="INFINITE" PlaybackDirection="Alternate" Easing="SineEaseInOut">
+          <KeyFrame Cue="0%">
+            <Setter Property="TranslateTransform.X" Value="0" />
+            <Setter Property="TranslateTransform.Y" Value="0" />
+            <Setter Property="Opacity" Value="0.12" />
+          </KeyFrame>
+          <KeyFrame Cue="100%">
+            <Setter Property="TranslateTransform.X" Value="140" />
+            <Setter Property="TranslateTransform.Y" Value="80" />
+            <Setter Property="Opacity" Value="0.18" />
+          </KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
+
+    <Style Selector="Ellipse.orb-cyan">
+      <Style.Animations>
+        <Animation Duration="0:0:20" IterationCount="INFINITE" PlaybackDirection="Alternate" Easing="SineEaseInOut">
+          <KeyFrame Cue="0%">
+            <Setter Property="TranslateTransform.X" Value="0" />
+            <Setter Property="TranslateTransform.Y" Value="0" />
+            <Setter Property="Opacity" Value="0.10" />
+          </KeyFrame>
+          <KeyFrame Cue="100%">
+            <Setter Property="TranslateTransform.X" Value="-120" />
+            <Setter Property="TranslateTransform.Y" Value="-60" />
+            <Setter Property="Opacity" Value="0.16" />
+          </KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
+
+    <Style Selector="Ellipse.orb-orange">
+      <Style.Animations>
+        <Animation Duration="0:0:14" IterationCount="INFINITE" PlaybackDirection="Alternate" Easing="SineEaseInOut">
+          <KeyFrame Cue="0%">
+            <Setter Property="TranslateTransform.X" Value="0" />
+            <Setter Property="TranslateTransform.Y" Value="0" />
+            <Setter Property="Opacity" Value="0.06" />
+          </KeyFrame>
+          <KeyFrame Cue="100%">
+            <Setter Property="TranslateTransform.X" Value="80" />
+            <Setter Property="TranslateTransform.Y" Value="-90" />
+            <Setter Property="Opacity" Value="0.10" />
+          </KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
+
     <!-- View host fade+slide transition -->
     <Style Selector="ContentControl.view-host">
       <Style.Animations>
-        <Animation Duration="0:0:0.28" Easing="CubicEaseOut" FillMode="Forward">
+        <Animation Duration="0:0:0.32" Easing="CubicEaseOut" FillMode="Forward">
           <KeyFrame Cue="0%">
             <Setter Property="Opacity" Value="0" />
-            <Setter Property="TranslateTransform.Y" Value="16" />
+            <Setter Property="TranslateTransform.Y" Value="20" />
           </KeyFrame>
           <KeyFrame Cue="100%">
             <Setter Property="Opacity" Value="1" />
@@ -33,28 +85,10 @@
       </Style.Animations>
     </Style>
 
-    <!-- Sidebar transition -->
-    <Style Selector="Border.sidebar">
-      <Setter Property="Transitions">
-        <Transitions>
-          <DoubleTransition Property="Width" Duration="0:0:0.22" Easing="CubicEaseInOut" />
-        </Transitions>
-      </Setter>
-    </Style>
-
-    <!-- Nav active indicator bar -->
-    <Style Selector="Border.nav-indicator">
-      <Setter Property="Transitions">
-        <Transitions>
-          <DoubleTransition Property="Opacity" Duration="0:0:0.15" />
-        </Transitions>
-      </Setter>
-    </Style>
-
     <!-- Chrome button base -->
     <Style Selector="Button.chrome-btn">
       <Setter Property="Background" Value="Transparent" />
-      <Setter Property="Foreground" Value="#64748B" />
+      <Setter Property="Foreground" Value="#6B5F8A" />
       <Setter Property="CornerRadius" Value="8" />
       <Setter Property="Width" Value="34" />
       <Setter Property="Height" Value="28" />
@@ -63,11 +97,11 @@
       <Setter Property="Padding" Value="0" />
     </Style>
     <Style Selector="Button.chrome-btn:pointerover">
-      <Setter Property="Background" Value="#20FFFFFF" />
-      <Setter Property="Foreground" Value="#CBD5E1" />
+      <Setter Property="Background" Value="#18FFFFFF" />
+      <Setter Property="Foreground" Value="#A78BFA" />
     </Style>
     <Style Selector="Button.chrome-close:pointerover">
-      <Setter Property="Background" Value="#EF4444" />
+      <Setter Property="Background" Value="#FB7185" />
       <Setter Property="Foreground" Value="White" />
     </Style>
 
@@ -80,19 +114,76 @@
       </Setter>
     </Style>
 
+    <!-- Nav bar fade-in -->
+    <Style Selector="Border.nav-strip">
+      <Style.Animations>
+        <Animation Duration="0:0:0.5" Delay="0:0:0.1" Easing="CubicEaseOut" FillMode="Forward">
+          <KeyFrame Cue="0%">
+            <Setter Property="Opacity" Value="0" />
+            <Setter Property="TranslateTransform.Y" Value="-8" />
+          </KeyFrame>
+          <KeyFrame Cue="100%">
+            <Setter Property="Opacity" Value="1" />
+            <Setter Property="TranslateTransform.Y" Value="0" />
+          </KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
+
   </Window.Styles>
 
   <!-- Root: rounded window with drop shadow -->
   <Border CornerRadius="18"
           ClipToBounds="True"
-          BoxShadow="0 8 48 0 #80000000, 0 2 8 0 #40000000"
+          BoxShadow="0 12 60 0 #90000000, 0 0 1 0 #20E879F9"
           Background="{DynamicResource BgBaseBrush}">
 
-    <!-- Full-screen grid: splash/login overlay + shell -->
+    <!-- Full-screen grid: animated BG + splash/login overlay + shell -->
     <Grid>
 
       <!-- ═══════════════════════════════════════
-           SPLASH / LOGIN  (overlay phases)
+           ANIMATED BACKGROUND — Floating gradient orbs
+      ═══════════════════════════════════════ -->
+      <Canvas IsHitTestVisible="False" ClipToBounds="True">
+        <!-- Fuchsia orb — top left -->
+        <Ellipse Width="600" Height="600" Classes="orb-fuchsia"
+                 Canvas.Left="-150" Canvas.Top="-200">
+          <Ellipse.RenderTransform><TranslateTransform /></Ellipse.RenderTransform>
+          <Ellipse.Fill>
+            <RadialGradientBrush>
+              <GradientStop Color="#E879F9" Offset="0" />
+              <GradientStop Color="#00E879F9" Offset="1" />
+            </RadialGradientBrush>
+          </Ellipse.Fill>
+        </Ellipse>
+
+        <!-- Cyan orb — bottom right -->
+        <Ellipse Width="500" Height="500" Classes="orb-cyan"
+                 Canvas.Left="700" Canvas.Top="300">
+          <Ellipse.RenderTransform><TranslateTransform /></Ellipse.RenderTransform>
+          <Ellipse.Fill>
+            <RadialGradientBrush>
+              <GradientStop Color="#22D3EE" Offset="0" />
+              <GradientStop Color="#0022D3EE" Offset="1" />
+            </RadialGradientBrush>
+          </Ellipse.Fill>
+        </Ellipse>
+
+        <!-- Orange orb — center-right -->
+        <Ellipse Width="350" Height="350" Classes="orb-orange"
+                 Canvas.Left="900" Canvas.Top="-50">
+          <Ellipse.RenderTransform><TranslateTransform /></Ellipse.RenderTransform>
+          <Ellipse.Fill>
+            <RadialGradientBrush>
+              <GradientStop Color="#FB923C" Offset="0" />
+              <GradientStop Color="#00FB923C" Offset="1" />
+            </RadialGradientBrush>
+          </Ellipse.Fill>
+        </Ellipse>
+      </Canvas>
+
+      <!-- ═══════════════════════════════════════
+           SPLASH / LOGIN (overlay phases)
       ═══════════════════════════════════════ -->
       <ContentControl Content="{Binding CurrentView}"
                       IsVisible="{Binding !IsShell}"
@@ -117,15 +208,14 @@
       </ContentControl>
 
       <!-- ═══════════════════════════════════════
-           MAIN SHELL  (title bar + sidebar + content)
+           MAIN SHELL — Horizontal nav + content (no sidebar)
       ═══════════════════════════════════════ -->
-      <Grid RowDefinitions="46,*"
-            ColumnDefinitions="Auto,*"
+      <Grid RowDefinitions="42,Auto,*"
             IsVisible="{Binding IsShell}">
 
         <!-- ── TITLE BAR ── -->
-        <Border Grid.Row="0" Grid.ColumnSpan="2"
-                Background="#0D1223"
+        <Border Grid.Row="0"
+                Background="#0D0A16"
                 BorderBrush="{DynamicResource BorderSubtleBrush}"
                 BorderThickness="0,0,0,1"
                 Name="TitleBar">
@@ -136,13 +226,14 @@
                         Orientation="Horizontal"
                         Spacing="12" Margin="16,0,0,0"
                         VerticalAlignment="Center">
-              <!-- Logo mark (geometric diamond) -->
+              <!-- Logo — hexagonal feel -->
               <Border Width="26" Height="26"
                       CornerRadius="8"
-                      Background="#20818CF8"
-                      BorderBrush="#40818CF8"
-                      BorderThickness="1">
-                <TextBlock Text="✦" FontSize="13"
+                      Background="#20E879F9"
+                      BorderBrush="#40E879F9"
+                      BorderThickness="1"
+                      BoxShadow="0 0 12 0 #30E879F9">
+                <TextBlock Text="◆" FontSize="12"
                            Foreground="{DynamicResource AccentPrimaryBrush}"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center" />
@@ -155,10 +246,9 @@
 
               <!-- Status chip -->
               <Border Classes="status-chip chip"
-                      Background="#34D39920"
+                      Background="#4ADE8020"
                       VerticalAlignment="Center">
                 <StackPanel Orientation="Horizontal" Spacing="5">
-                  <!-- Pulse dot -->
                   <Ellipse Width="6" Height="6"
                            Fill="{DynamicResource AccentSuccessBrush}" />
                   <TextBlock Text="{Binding StatusText}"
@@ -196,99 +286,69 @@
           </Grid>
         </Border>
 
-        <!-- ── SIDEBAR ── -->
-        <Border Grid.Row="1" Grid.Column="0"
-                Classes="sidebar"
-                Width="{Binding SidebarWidth}"
-                Background="{DynamicResource BgSidebarBrush}"
+        <!-- ── HORIZONTAL NAVIGATION BAR ── -->
+        <Border Grid.Row="1"
+                Classes="nav-strip"
+                Background="#0A0714"
                 BorderBrush="{DynamicResource BorderSubtleBrush}"
-                BorderThickness="0,0,1,0"
-                CornerRadius="0,0,0,18"
-                Padding="8,14,8,14">
-          <DockPanel>
+                BorderThickness="0,0,0,1"
+                Padding="16,6"
+                Opacity="0"
+                RenderTransformOrigin="0.5,0">
+          <Border.RenderTransform><TranslateTransform /></Border.RenderTransform>
 
-            <!-- Bottom: collapse toggle -->
-            <Button DockPanel.Dock="Bottom"
-                    Classes="nav-item"
-                    Command="{Binding ToggleSidebarCommand}"
-                    Margin="0,6,0,0"
-                    ToolTip.Tip="Collapse sidebar">
-              <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBlock Text="{Binding SidebarCollapseIcon}"
-                           FontSize="14" Width="20"
-                           TextAlignment="Center"
-                           Foreground="{DynamicResource TextMutedBrush}" />
-                <TextBlock Text="Collapse"
-                           FontSize="12"
-                           Foreground="{DynamicResource TextMutedBrush}"
-                           IsVisible="{Binding IsSidebarExpanded}" />
+          <StackPanel Orientation="Horizontal" Spacing="4"
+                      HorizontalAlignment="Center">
+
+            <Button Classes="nav-item"
+                    Command="{Binding NavigateCommand}"
+                    CommandParameter="Dashboard"
+                    ToolTip.Tip="Dashboard">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="◈" FontSize="14" VerticalAlignment="Center" />
+                <TextBlock Text="Dashboard" FontSize="13" VerticalAlignment="Center" />
               </StackPanel>
             </Button>
 
-            <!-- Divider -->
-            <Border DockPanel.Dock="Bottom" Classes="divider" Margin="4,0" />
+            <Button Classes="nav-item"
+                    Command="{Binding NavigateCommand}"
+                    CommandParameter="Events"
+                    ToolTip.Tip="Live Events">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="⚡" FontSize="14" VerticalAlignment="Center" />
+                <TextBlock Text="Events" FontSize="13" VerticalAlignment="Center" />
+              </StackPanel>
+            </Button>
 
-            <!-- Nav items -->
-            <StackPanel Spacing="3">
+            <Button Classes="nav-item"
+                    Command="{Binding NavigateCommand}"
+                    CommandParameter="Config"
+                    ToolTip.Tip="Configuration">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="⚙" FontSize="14" VerticalAlignment="Center" />
+                <TextBlock Text="Config" FontSize="13" VerticalAlignment="Center" />
+              </StackPanel>
+            </Button>
 
-              <Button Classes="nav-item"
-                      Command="{Binding NavigateCommand}"
-                      CommandParameter="Dashboard"
-                      ToolTip.Tip="Dashboard">
-                <StackPanel Orientation="Horizontal" Spacing="12">
-                  <TextBlock Text="▦" FontSize="15" Width="20"
-                             TextAlignment="Center" />
-                  <TextBlock Text="Dashboard" FontSize="13"
-                             IsVisible="{Binding IsSidebarExpanded}" />
-                </StackPanel>
-              </Button>
+            <Button Classes="nav-item"
+                    Command="{Binding NavigateCommand}"
+                    CommandParameter="Notifier"
+                    ToolTip.Tip="Notifier">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="🔔" FontSize="14" VerticalAlignment="Center" />
+                <TextBlock Text="Notifier" FontSize="13" VerticalAlignment="Center" />
+              </StackPanel>
+            </Button>
 
-              <Button Classes="nav-item"
-                      Command="{Binding NavigateCommand}"
-                      CommandParameter="Events"
-                      ToolTip.Tip="Live Events">
-                <StackPanel Orientation="Horizontal" Spacing="12">
-                  <TextBlock Text="⚡" FontSize="15" Width="20"
-                             TextAlignment="Center" />
-                  <TextBlock Text="Events" FontSize="13"
-                             IsVisible="{Binding IsSidebarExpanded}" />
-                </StackPanel>
-              </Button>
-
-              <Button Classes="nav-item"
-                      Command="{Binding NavigateCommand}"
-                      CommandParameter="Config"
-                      ToolTip.Tip="Configuration">
-                <StackPanel Orientation="Horizontal" Spacing="12">
-                  <TextBlock Text="⚙" FontSize="15" Width="20"
-                             TextAlignment="Center" />
-                  <TextBlock Text="Config" FontSize="13"
-                             IsVisible="{Binding IsSidebarExpanded}" />
-                </StackPanel>
-              </Button>
-
-              <Button Classes="nav-item"
-                      Command="{Binding NavigateCommand}"
-                      CommandParameter="Notifier"
-                      ToolTip.Tip="Notifier">
-                <StackPanel Orientation="Horizontal" Spacing="12">
-                  <TextBlock Text="🔔" FontSize="15" Width="20"
-                             TextAlignment="Center" />
-                  <TextBlock Text="Notifier" FontSize="13"
-                             IsVisible="{Binding IsSidebarExpanded}" />
-                </StackPanel>
-              </Button>
-
-            </StackPanel>
-          </DockPanel>
+          </StackPanel>
         </Border>
 
-        <!-- ── MAIN CONTENT ── -->
-        <Border Grid.Row="1" Grid.Column="1"
-                Background="{DynamicResource BgSurfaceBrush}"
-                CornerRadius="0,0,18,0"
+        <!-- ── MAIN CONTENT AREA ── -->
+        <Border Grid.Row="2"
+                Background="Transparent"
+                CornerRadius="0,0,18,18"
                 ClipToBounds="True"
-                Padding="24,20">
+                Padding="28,22">
           <ContentControl Content="{Binding CurrentView}"
                           Classes="view-host"
                           IsVisible="{Binding IsShell}">
