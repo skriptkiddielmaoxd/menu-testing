@@ -68,3 +68,19 @@ public sealed class ShowHideConverter : IValueConverter
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => Avalonia.Data.BindingOperations.DoNothing;
 }
+
+/// <summary>Converts progress (0.0–1.0) → width for the custom progress bar (max 300px).</summary>
+public sealed class ProgressToWidthConverter : IValueConverter
+{
+    public static readonly ProgressToWidthConverter Instance = new();
+
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is double d)
+            return Math.Max(0, Math.Min(300, d * 300));
+        return 0.0;
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => Avalonia.Data.BindingOperations.DoNothing;
+}

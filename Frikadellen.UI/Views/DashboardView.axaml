@@ -9,18 +9,18 @@
     <vm:BoolToStringConverter x:Key="BoolToRunningText"
                                TrueValue="Running" FalseValue="Stopped" />
     <vm:BoolToColorConverter x:Key="BoolToRunningColor"
-                              TrueColor="#34D399" FalseColor="#F87171" />
+                              TrueColor="#4ADE80" FalseColor="#FB7185" />
   </UserControl.Resources>
 
   <UserControl.Styles>
 
-    <!-- Stat card stagger-in: card 1 -->
+    <!-- Stat card stagger-in -->
     <Style Selector="Border.stat-1">
       <Style.Animations>
-        <Animation Duration="0:0:0.45" Delay="0:0:0.0" Easing="CubicEaseOut" FillMode="Forward">
+        <Animation Duration="0:0:0.5" Delay="0:0:0.0" Easing="CubicEaseOut" FillMode="Forward">
           <KeyFrame Cue="0%">
             <Setter Property="Opacity" Value="0" />
-            <Setter Property="TranslateTransform.Y" Value="20" />
+            <Setter Property="TranslateTransform.Y" Value="24" />
           </KeyFrame>
           <KeyFrame Cue="100%">
             <Setter Property="Opacity" Value="1" />
@@ -31,10 +31,10 @@
     </Style>
     <Style Selector="Border.stat-2">
       <Style.Animations>
-        <Animation Duration="0:0:0.45" Delay="0:0:0.08" Easing="CubicEaseOut" FillMode="Forward">
+        <Animation Duration="0:0:0.5" Delay="0:0:0.08" Easing="CubicEaseOut" FillMode="Forward">
           <KeyFrame Cue="0%">
             <Setter Property="Opacity" Value="0" />
-            <Setter Property="TranslateTransform.Y" Value="20" />
+            <Setter Property="TranslateTransform.Y" Value="24" />
           </KeyFrame>
           <KeyFrame Cue="100%">
             <Setter Property="Opacity" Value="1" />
@@ -45,10 +45,10 @@
     </Style>
     <Style Selector="Border.stat-3">
       <Style.Animations>
-        <Animation Duration="0:0:0.45" Delay="0:0:0.16" Easing="CubicEaseOut" FillMode="Forward">
+        <Animation Duration="0:0:0.5" Delay="0:0:0.16" Easing="CubicEaseOut" FillMode="Forward">
           <KeyFrame Cue="0%">
             <Setter Property="Opacity" Value="0" />
-            <Setter Property="TranslateTransform.Y" Value="20" />
+            <Setter Property="TranslateTransform.Y" Value="24" />
           </KeyFrame>
           <KeyFrame Cue="100%">
             <Setter Property="Opacity" Value="1" />
@@ -59,10 +59,10 @@
     </Style>
     <Style Selector="Border.stat-4">
       <Style.Animations>
-        <Animation Duration="0:0:0.45" Delay="0:0:0.24" Easing="CubicEaseOut" FillMode="Forward">
+        <Animation Duration="0:0:0.5" Delay="0:0:0.24" Easing="CubicEaseOut" FillMode="Forward">
           <KeyFrame Cue="0%">
             <Setter Property="Opacity" Value="0" />
-            <Setter Property="TranslateTransform.Y" Value="20" />
+            <Setter Property="TranslateTransform.Y" Value="24" />
           </KeyFrame>
           <KeyFrame Cue="100%">
             <Setter Property="Opacity" Value="1" />
@@ -72,7 +72,7 @@
       </Style.Animations>
     </Style>
 
-    <!-- Toggle button scale transition -->
+    <!-- Toggle button transition -->
     <Style Selector="Button.toggle-btn">
       <Setter Property="Transitions">
         <Transitions>
@@ -82,22 +82,39 @@
     </Style>
     <Style Selector="Button.toggle-btn:pressed">
       <Setter Property="RenderTransform">
-        <ScaleTransform ScaleX="0.97" ScaleY="0.97" />
+        <ScaleTransform ScaleX="0.96" ScaleY="0.96" />
       </Setter>
     </Style>
 
-    <!-- Flip row slide-in (applied per item via ItemContainerTheme not possible in Avalonia easily,
-         so we apply to the list itself) -->
+    <!-- Flips section slide-in -->
     <Style Selector="Border.flips-section">
       <Style.Animations>
-        <Animation Duration="0:0:0.4" Delay="0:0:0.3" Easing="CubicEaseOut" FillMode="Forward">
+        <Animation Duration="0:0:0.45" Delay="0:0:0.32" Easing="CubicEaseOut" FillMode="Forward">
           <KeyFrame Cue="0%">
             <Setter Property="Opacity" Value="0" />
-            <Setter Property="TranslateTransform.Y" Value="16" />
+            <Setter Property="TranslateTransform.Y" Value="18" />
           </KeyFrame>
           <KeyFrame Cue="100%">
             <Setter Property="Opacity" Value="1" />
             <Setter Property="TranslateTransform.Y" Value="0" />
+          </KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
+
+    <!-- Hero card entrance -->
+    <Style Selector="Border.hero-card">
+      <Style.Animations>
+        <Animation Duration="0:0:0.5" Delay="0:0:0.05" Easing="CubicEaseOut" FillMode="Forward">
+          <KeyFrame Cue="0%">
+            <Setter Property="Opacity" Value="0" />
+            <Setter Property="ScaleTransform.ScaleX" Value="0.96" />
+            <Setter Property="ScaleTransform.ScaleY" Value="0.96" />
+          </KeyFrame>
+          <KeyFrame Cue="100%">
+            <Setter Property="Opacity" Value="1" />
+            <Setter Property="ScaleTransform.ScaleX" Value="1" />
+            <Setter Property="ScaleTransform.ScaleY" Value="1" />
           </KeyFrame>
         </Animation>
       </Style.Animations>
@@ -108,147 +125,162 @@
   <ScrollViewer HorizontalScrollBarVisibility="Disabled">
     <StackPanel Spacing="0" Margin="0,0,8,0">
 
-      <!-- ── PAGE HEADER ── -->
-      <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,24">
-        <StackPanel Grid.Column="0" Spacing="4">
-          <TextBlock Text="Dashboard"
-                     FontSize="26" FontWeight="Bold"
-                     Foreground="{DynamicResource TextPrimaryBrush}" />
-          <TextBlock Text="Live bot metrics and controls"
-                     FontSize="13"
-                     Foreground="{DynamicResource TextMutedBrush}" />
+      <!-- ── HERO: HEADER + BIG START/STOP ── -->
+      <Border Classes="hero-card"
+              Background="{DynamicResource BgCardBrush}"
+              CornerRadius="18"
+              Padding="0"
+              ClipToBounds="True"
+              Margin="0,0,0,18"
+              BoxShadow="0 6 30 0 #30000000, 0 0 1 0 #15E879F9"
+              BorderBrush="{DynamicResource BorderSubtleBrush}"
+              BorderThickness="1"
+              RenderTransformOrigin="0.5,0.5"
+              Opacity="0">
+        <Border.RenderTransform><ScaleTransform /></Border.RenderTransform>
+        <StackPanel>
+          <!-- Gradient top accent -->
+          <Border Height="2">
+            <Border.Background>
+              <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                <GradientStop Color="#E879F9" Offset="0" />
+                <GradientStop Color="#22D3EE" Offset="0.5" />
+                <GradientStop Color="#FB923C" Offset="1" />
+              </LinearGradientBrush>
+            </Border.Background>
+          </Border>
+
+          <Grid ColumnDefinitions="*,Auto" Margin="26,22,26,22">
+            <StackPanel Grid.Column="0" Spacing="4">
+              <TextBlock Text="Dashboard"
+                         FontSize="28" FontWeight="ExtraBold"
+                         Foreground="{DynamicResource TextPrimaryBrush}" />
+              <TextBlock Text="Live bot metrics and controls"
+                         FontSize="13"
+                         Foreground="{DynamicResource TextMutedBrush}" />
+            </StackPanel>
+
+            <!-- Start / Stop CTA -->
+            <Button Grid.Column="1"
+                    Classes="toggle-btn"
+                    CornerRadius="24"
+                    Padding="28,14"
+                    FontWeight="Bold"
+                    FontSize="14"
+                    Cursor="Hand"
+                    VerticalAlignment="Center"
+                    Background="{Binding ToggleButtonColor}"
+                    Foreground="White"
+                    Command="{Binding ToggleCommand}"
+                    RenderTransformOrigin="0.5,0.5">
+              <Button.RenderTransform>
+                <ScaleTransform />
+              </Button.RenderTransform>
+              <TextBlock Text="{Binding ToggleButtonLabel}"
+                         FontSize="14" FontWeight="Bold" />
+            </Button>
+          </Grid>
         </StackPanel>
+      </Border>
 
-        <!-- Start / Stop CTA -->
-        <Button Grid.Column="1"
-                Classes="toggle-btn"
-                CornerRadius="24"
-                Padding="26,13"
-                FontWeight="Bold"
-                FontSize="14"
-                Cursor="Hand"
-                VerticalAlignment="Center"
-                Background="{Binding ToggleButtonColor}"
-                Foreground="White"
-                Command="{Binding ToggleCommand}"
-                RenderTransformOrigin="0.5,0.5">
-          <Button.RenderTransform>
-            <ScaleTransform />
-          </Button.RenderTransform>
-          <TextBlock Text="{Binding ToggleButtonLabel}"
-                     FontSize="14" FontWeight="Bold" />
-        </Button>
-      </Grid>
+      <!-- ── BENTO GRID: STATS ── -->
+      <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" Margin="0,0,0,18">
 
-      <!-- ── STAT CARDS ROW ── -->
-      <Grid ColumnDefinitions="*,*,*,*" Margin="0,0,0,20">
-
-        <!-- Card 1: Script State -->
-        <Border Grid.Column="0" Classes="card stat-1"
-                Margin="0,0,10,0"
-                RenderTransformOrigin="0.5,1">
-          <Border.RenderTransform>
-            <TranslateTransform />
-          </Border.RenderTransform>
-          <StackPanel Spacing="12">
-            <StackPanel Orientation="Horizontal" Spacing="8">
-              <Border Width="32" Height="32" CornerRadius="10"
-                      Background="#15818CF8">
-                <TextBlock Text="▦" FontSize="14"
-                           Foreground="{DynamicResource AccentPrimaryBrush}"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
-              </Border>
-              <TextBlock Text="SCRIPT" Classes="section-title"
+        <!-- Card 1: Script State — spans top-left -->
+        <Border Grid.Column="0" Grid.Row="0" Classes="card stat-1"
+                Margin="0,0,8,0"
+                RenderTransformOrigin="0.5,1"
+                Opacity="0">
+          <Border.RenderTransform><TranslateTransform /></Border.RenderTransform>
+          <Grid ColumnDefinitions="Auto,*">
+            <Border Grid.Column="0" Width="42" Height="42" CornerRadius="12"
+                    Background="#18E879F9"
+                    Margin="0,0,14,0">
+              <TextBlock Text="◈" FontSize="18"
+                         Foreground="{DynamicResource AccentPrimaryBrush}"
+                         HorizontalAlignment="Center"
                          VerticalAlignment="Center" />
+            </Border>
+            <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
+              <TextBlock Text="SCRIPT STATUS" Classes="section-title" Margin="0" />
+              <TextBlock Text="{Binding ScriptState}"
+                         FontSize="24" FontWeight="Bold"
+                         TextTrimming="CharacterEllipsis"
+                         Foreground="{Binding IsRunning, Converter={StaticResource BoolToRunningColor}}" />
             </StackPanel>
-            <TextBlock Text="{Binding ScriptState}"
-                       FontSize="22" FontWeight="Bold"
-                       Foreground="{Binding IsRunning, Converter={StaticResource BoolToRunningColor}}" />
-            <TextBlock Text="Current state"
-                       FontSize="11"
-                       Foreground="{DynamicResource TextMutedBrush}" />
-          </StackPanel>
+          </Grid>
         </Border>
 
-        <!-- Card 2: Purse -->
-        <Border Grid.Column="1" Classes="card stat-2"
-                Margin="0,0,10,0"
-                RenderTransformOrigin="0.5,1">
-          <Border.RenderTransform>
-            <TranslateTransform />
-          </Border.RenderTransform>
-          <StackPanel Spacing="12">
-            <StackPanel Orientation="Horizontal" Spacing="8">
-              <Border Width="32" Height="32" CornerRadius="10"
-                      Background="#15FBBF24">
-                <TextBlock Text="💰" FontSize="14"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
-              </Border>
-              <TextBlock Text="PURSE" Classes="section-title"
+        <!-- Card 2: Purse — top-right -->
+        <Border Grid.Column="1" Grid.Row="0" Classes="card stat-2"
+                RenderTransformOrigin="0.5,1"
+                Opacity="0">
+          <Border.RenderTransform><TranslateTransform /></Border.RenderTransform>
+          <Grid ColumnDefinitions="Auto,*">
+            <Border Grid.Column="0" Width="42" Height="42" CornerRadius="12"
+                    Background="#18FBBF24"
+                    Margin="0,0,14,0">
+              <TextBlock Text="💰" FontSize="18"
+                         HorizontalAlignment="Center"
                          VerticalAlignment="Center" />
+            </Border>
+            <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
+              <TextBlock Text="PURSE" Classes="section-title" Margin="0" />
+              <TextBlock Text="{Binding Purse}"
+                         FontSize="24" FontWeight="Bold"
+                         TextTrimming="CharacterEllipsis"
+                         Foreground="{DynamicResource AccentWarningBrush}" />
             </StackPanel>
-            <TextBlock Text="{Binding Purse}"
-                       FontSize="22" FontWeight="Bold"
-                       Foreground="{DynamicResource AccentWarningBrush}" />
-            <TextBlock Text="Current balance"
-                       FontSize="11"
-                       Foreground="{DynamicResource TextMutedBrush}" />
-          </StackPanel>
+          </Grid>
         </Border>
 
-        <!-- Card 3: Queue -->
-        <Border Grid.Column="2" Classes="card stat-3"
-                Margin="0,0,10,0"
-                RenderTransformOrigin="0.5,1">
-          <Border.RenderTransform>
-            <TranslateTransform />
-          </Border.RenderTransform>
-          <StackPanel Spacing="12">
-            <StackPanel Orientation="Horizontal" Spacing="8">
-              <Border Width="32" Height="32" CornerRadius="10"
-                      Background="#1538BDF8">
-                <TextBlock Text="⚡" FontSize="14"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
-              </Border>
-              <TextBlock Text="QUEUE" Classes="section-title"
+        <!-- Card 3: Queue — bottom-left -->
+        <Border Grid.Column="0" Grid.Row="1" Classes="card stat-3"
+                Margin="0,0,8,0"
+                RenderTransformOrigin="0.5,1"
+                Opacity="0">
+          <Border.RenderTransform><TranslateTransform /></Border.RenderTransform>
+          <Grid ColumnDefinitions="Auto,*">
+            <Border Grid.Column="0" Width="42" Height="42" CornerRadius="12"
+                    Background="#1822D3EE"
+                    Margin="0,0,14,0">
+              <TextBlock Text="⚡" FontSize="18"
+                         HorizontalAlignment="Center"
                          VerticalAlignment="Center" />
+            </Border>
+            <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
+              <TextBlock Text="QUEUE DEPTH" Classes="section-title" Margin="0" />
+              <TextBlock Text="{Binding QueueDepth}"
+                         FontSize="24" FontWeight="Bold"
+                         Foreground="{DynamicResource AccentSecondaryBrush}" />
             </StackPanel>
-            <TextBlock Text="{Binding QueueDepth}"
-                       FontSize="22" FontWeight="Bold"
-                       Foreground="{DynamicResource AccentSecondaryBrush}" />
-            <TextBlock Text="Flips pending"
-                       FontSize="11"
-                       Foreground="{DynamicResource TextMutedBrush}" />
-          </StackPanel>
+          </Grid>
         </Border>
 
-        <!-- Card 4: Session profit -->
-        <Border Grid.Column="3" Classes="card stat-4"
-                RenderTransformOrigin="0.5,1">
-          <Border.RenderTransform>
-            <TranslateTransform />
-          </Border.RenderTransform>
-          <StackPanel Spacing="12">
-            <StackPanel Orientation="Horizontal" Spacing="8">
-              <Border Width="32" Height="32" CornerRadius="10"
-                      Background="#1534D399">
-                <TextBlock Text="📈" FontSize="14"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
-              </Border>
-              <TextBlock Text="PROFIT" Classes="section-title"
+        <!-- Card 4: Session Profit — bottom-right -->
+        <Border Grid.Column="1" Grid.Row="1" Classes="card stat-4"
+                RenderTransformOrigin="0.5,1"
+                Opacity="0">
+          <Border.RenderTransform><TranslateTransform /></Border.RenderTransform>
+          <Grid ColumnDefinitions="Auto,*">
+            <Border Grid.Column="0" Width="42" Height="42" CornerRadius="12"
+                    Background="#184ADE80"
+                    Margin="0,0,14,0">
+              <TextBlock Text="📈" FontSize="18"
+                         HorizontalAlignment="Center"
                          VerticalAlignment="Center" />
+            </Border>
+            <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
+              <TextBlock Text="SESSION PROFIT" Classes="section-title" Margin="0" />
+              <TextBlock Text="{Binding SessionProfit}"
+                         FontSize="24" FontWeight="Bold"
+                         TextTrimming="CharacterEllipsis"
+                         Foreground="{DynamicResource AccentSuccessBrush}" />
+              <TextBlock Text="{Binding SessionFlips, StringFormat='{}{0} flips this session'}"
+                         FontSize="11"
+                         Foreground="{DynamicResource TextMutedBrush}" />
             </StackPanel>
-            <TextBlock Text="{Binding SessionProfit}"
-                       FontSize="22" FontWeight="Bold"
-                       Foreground="{DynamicResource AccentSuccessBrush}" />
-            <TextBlock Text="{Binding SessionFlips, StringFormat='Session: {0} flips'}"
-                       FontSize="11"
-                       Foreground="{DynamicResource TextMutedBrush}" />
-          </StackPanel>
+          </Grid>
         </Border>
       </Grid>
 
@@ -256,46 +288,47 @@
       <Border Classes="card flips-section"
               IsVisible="{Binding LatestFlip, Converter={x:Static vm:NullToBoolConverter.Instance}}"
               RenderTransformOrigin="0.5,0.5"
-              Margin="0,0,0,20">
-        <Border.RenderTransform>
-          <TranslateTransform />
-        </Border.RenderTransform>
+              Margin="0,0,0,18"
+              Opacity="0"
+              BoxShadow="0 4 24 0 #30000000, 0 0 1 0 #15E879F9">
+        <Border.RenderTransform><TranslateTransform /></Border.RenderTransform>
         <Grid ColumnDefinitions="Auto,*,Auto">
-          <Border Grid.Column="0" Width="42" Height="42"
-                  CornerRadius="12"
-                  Background="#15818CF8"
+          <Border Grid.Column="0" Width="46" Height="46"
+                  CornerRadius="14"
+                  Background="#18E879F9"
                   VerticalAlignment="Center"
-                  Margin="0,0,14,0">
-            <TextBlock Text="🛒" FontSize="20"
+                  Margin="0,0,16,0"
+                  BoxShadow="0 0 12 0 #20E879F9">
+            <TextBlock Text="🛒" FontSize="22"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center" />
           </Border>
-          <StackPanel Grid.Column="1" Spacing="3" VerticalAlignment="Center">
+          <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
             <TextBlock Text="Latest Flip"
-                       FontSize="11" Classes="section-title"
-                       Margin="0" />
+                       FontSize="10" FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextMutedBrush}"
+                       LetterSpacing="1" />
             <TextBlock Text="{Binding LatestFlip.ItemName}"
-                       FontSize="15" FontWeight="SemiBold"
+                       FontSize="16" FontWeight="SemiBold"
                        Foreground="{DynamicResource TextPrimaryBrush}" />
           </StackPanel>
-          <StackPanel Grid.Column="2" Spacing="2" HorizontalAlignment="Right"
+          <StackPanel Grid.Column="2" Spacing="3" HorizontalAlignment="Right"
                       VerticalAlignment="Center">
             <TextBlock Text="{Binding LatestFlip.ProfitLabel}"
-                       FontSize="16" FontWeight="Bold"
+                       FontSize="18" FontWeight="Bold"
                        Foreground="{DynamicResource AccentSuccessBrush}"
                        HorizontalAlignment="Right" />
             <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
               <TextBlock Text="{Binding LatestFlip.BuyLabel, StringFormat='Buy: {0}'}"
                          FontSize="11"
                          Foreground="{DynamicResource TextMutedBrush}" />
-              <TextBlock Text="→"
-                         FontSize="11"
+              <TextBlock Text="→" FontSize="11"
                          Foreground="{DynamicResource TextMutedBrush}" />
               <TextBlock Text="{Binding LatestFlip.SellLabel, StringFormat='Sell: {0}'}"
                          FontSize="11"
                          Foreground="{DynamicResource TextMutedBrush}" />
               <Border CornerRadius="8" Padding="6,2"
-                      Background="#1534D399">
+                      Background="#184ADE80">
                 <TextBlock Text="{Binding LatestFlip.SpeedLabel}"
                            FontSize="10" FontWeight="Medium"
                            Foreground="{DynamicResource AccentSuccessBrush}" />
@@ -309,15 +342,15 @@
       <Border Classes="card"
               RenderTransformOrigin="0.5,1">
         <StackPanel Spacing="14">
-          <StackPanel Orientation="Horizontal" Spacing="8">
+          <StackPanel Orientation="Horizontal" Spacing="10">
             <TextBlock Text="Recent Flips"
-                       FontSize="15" FontWeight="SemiBold"
+                       FontSize="16" FontWeight="Bold"
                        Foreground="{DynamicResource TextPrimaryBrush}" />
-            <Border CornerRadius="10" Padding="7,2"
+            <Border CornerRadius="12" Padding="8,3"
                     Background="{DynamicResource BgElevatedBrush}"
                     VerticalAlignment="Center">
               <TextBlock Text="{Binding RecentFlips.Count}"
-                         FontSize="11" FontWeight="Medium"
+                         FontSize="11" FontWeight="SemiBold"
                          Foreground="{DynamicResource TextSecondaryBrush}" />
             </Border>
           </StackPanel>
@@ -338,17 +371,17 @@
           <ItemsControl ItemsSource="{Binding RecentFlips}">
             <ItemsControl.ItemTemplate>
               <DataTemplate DataType="m:FlipRecord">
-                <Border Padding="0,8" CornerRadius="8">
+                <Border Padding="4,10" CornerRadius="10">
                   <Border.Styles>
                     <Style Selector="Border:pointerover">
-                      <Setter Property="Background" Value="#0DFFFFFF" />
+                      <Setter Property="Background" Value="#0AFFFFFF" />
                     </Style>
                   </Border.Styles>
                   <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto">
                     <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
-                      <Border Width="28" Height="28" CornerRadius="8"
+                      <Border Width="30" Height="30" CornerRadius="10"
                               Background="{DynamicResource BgElevatedBrush}">
-                        <TextBlock Text="🏷️" FontSize="13"
+                        <TextBlock Text="🏷️" FontSize="14"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />
                       </Border>
@@ -392,9 +425,9 @@
 
           <!-- Empty state -->
           <Border IsVisible="{Binding !RecentFlips.Count}"
-                  Padding="0,20">
-            <StackPanel HorizontalAlignment="Center" Spacing="8">
-              <TextBlock Text="📊" FontSize="32" HorizontalAlignment="Center" />
+                  Padding="0,24">
+            <StackPanel HorizontalAlignment="Center" Spacing="10">
+              <TextBlock Text="📊" FontSize="36" HorizontalAlignment="Center" />
               <TextBlock Text="No flips yet — start the script to begin."
                          FontSize="13"
                          Foreground="{DynamicResource TextMutedBrush}"

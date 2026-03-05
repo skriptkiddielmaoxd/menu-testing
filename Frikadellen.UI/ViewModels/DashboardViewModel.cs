@@ -72,10 +72,10 @@ public sealed class DashboardViewModel : ViewModelBase
     public string ToggleButtonLabel => IsRunning ? "⏹  Stop Script" : "▶  Start Script";
 
     public string ToggleButtonColor =>
-        IsRunning ? "#EF4444" : "#818CF8";
+        IsRunning ? "#FB7185" : "#E879F9";
 
     public string ToggleButtonShadow =>
-        IsRunning ? "0 4 20 0 #60EF4444" : "0 4 20 0 #60818CF8";
+        IsRunning ? "0 4 20 0 #60FB7185" : "0 4 20 0 #60E879F9";
 
     public ObservableCollection<FlipRecord> RecentFlips { get; } = new();
 

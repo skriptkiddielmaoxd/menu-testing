@@ -95,12 +95,11 @@ public sealed class MainWindowViewModel : ViewModelBase
         set => SetField(ref _statusText, value);
     }
 
-    // Status chip colour: green = running, red = stopped/error, amber = starting
     public string StatusChipColor => StatusText switch
     {
-        "Running"     => "#34D399",
+        "Running"     => "#4ADE80",
         var s when s.StartsWith("Starting") => "#FBBF24",
-        _             => "#F87171",
+        _             => "#FB7185",
     };
 
     public ICommand NavigateCommand { get; }
