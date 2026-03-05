@@ -3,6 +3,7 @@
         xmlns:vm="using:Frikadellen.UI.ViewModels"
         xmlns:views="using:Frikadellen.UI.Views"
         xmlns:m="using:Frikadellen.UI.Models"
+        xmlns:cvt="using:Frikadellen.UI.Converters"
         x:Class="Frikadellen.UI.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="Frikadellen"
@@ -134,7 +135,7 @@
   </Window.Styles>
 
   <Window.Resources>
-    <vm:StringToBrushConverter x:Key="StrBrush" />
+    <cvt:StringToBrushConverter x:Key="StrBrush" />
   </Window.Resources>
 
   <!-- Root: rounded window with drop shadow -->

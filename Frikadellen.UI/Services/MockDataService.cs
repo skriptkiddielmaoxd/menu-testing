@@ -153,7 +153,12 @@ public class MockDataService
     public static AnalyticsData GetAnalyticsData()
     {
         var flips = GetInitialFlips();
-        long total = 0; long best = 0; string bestItem = ""; long totalBuy = 0; int wins = 0; long totalSpeed = 0;
+        long total = 0;
+        long best = 0;
+        string bestItem = "";
+        long totalBuy = 0;
+        int wins = 0;
+        long totalSpeed = 0;
         var itemDict = new Dictionary<string, (int cnt, long tp, long bp)>();
 
         foreach (var f in flips)

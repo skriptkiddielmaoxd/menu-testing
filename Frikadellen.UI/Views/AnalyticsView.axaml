@@ -3,11 +3,12 @@
              xmlns:vm="using:Frikadellen.UI.ViewModels"
              xmlns:m="using:Frikadellen.UI.Models"
              xmlns:ctrl="using:Frikadellen.UI.Controls"
+             xmlns:cvt="using:Frikadellen.UI.Converters"
              x:Class="Frikadellen.UI.Views.AnalyticsView"
              x:DataType="vm:AnalyticsViewModel">
 
   <UserControl.Resources>
-    <vm:StringToBrushConverter x:Key="StrBrush" />
+    <cvt:StringToBrushConverter x:Key="StrBrush" />
   </UserControl.Resources>
 
   <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">

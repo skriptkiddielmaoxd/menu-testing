@@ -73,7 +73,7 @@ public class DonutChartControl : Control
         fig.Segments!.Add(new ArcSegment { Point = p2, Size = new Size(outerR, outerR), SweepDirection = SweepDirection.Clockwise, IsLargeArc = isLarge });
         fig.Segments.Add(new LineSegment { Point = p3 });
         fig.Segments.Add(new ArcSegment { Point = p4, Size = new Size(innerR, innerR), SweepDirection = SweepDirection.CounterClockwise, IsLargeArc = isLarge });
-        geo.Figures.Add(fig);
+        geo.Figures!.Add(fig);
 
         ctx.DrawGeometry(new SolidColorBrush(color), null, geo);
     }

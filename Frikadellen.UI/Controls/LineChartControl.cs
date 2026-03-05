@@ -53,7 +53,7 @@ public class LineChartControl : Control
         var segs = fillFigure.Segments!;
         foreach (var p in points) segs.Add(new LineSegment { Point = p });
         segs.Add(new LineSegment { Point = new Point(points[^1].X, h) });
-        fillGeo.Figures.Add(fillFigure);
+        fillGeo.Figures!.Add(fillFigure);
 
         var fillBrush = new LinearGradientBrush
         {
