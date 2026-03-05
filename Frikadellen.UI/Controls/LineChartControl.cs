@@ -50,8 +50,9 @@ public class LineChartControl : Control
         // Draw filled area
         var fillGeo = new PathGeometry();
         var fillFigure = new PathFigure { StartPoint = new Point(points[0].X, h), IsClosed = true };
-        foreach (var p in points) fillFigure.Segments!.Add(new LineSegment { Point = p });
-        fillFigure.Segments!.Add(new LineSegment { Point = new Point(points[^1].X, h) });
+        var segs = fillFigure.Segments!;
+        foreach (var p in points) segs.Add(new LineSegment { Point = p });
+        segs.Add(new LineSegment { Point = new Point(points[^1].X, h) });
         fillGeo.Figures.Add(fillFigure);
 
         var fillBrush = new LinearGradientBrush

@@ -14,7 +14,7 @@ public class StringToBrushConverter : IValueConverter
         if (value is string s && !string.IsNullOrEmpty(s))
         {
             try { return new SolidColorBrush(Color.Parse(s)); }
-            catch { }
+            catch { /* invalid color string — fall through to transparent */ }
         }
         return Brushes.Transparent;
     }
